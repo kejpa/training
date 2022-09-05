@@ -4,7 +4,10 @@
     "type": "project",
     "require": {
         "symfony/http-foundation": "^5.4",
-        "nikic/fast-route": "^1.3"
+        "nikic/fast-route": "^1.3",
+        "tracy/tracy": "^2.9",
+        "doctrine/dbal": "^3.3",
+        "rdlowrey/auryn": "^1.4"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"
@@ -12,7 +15,8 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Kejpa\\Trainingapi\\": "src/"
+            "Kejpa\\Trainingapi\\": "src/",
+            "tests\\": "tests"
         }
     },
     "authors": [
