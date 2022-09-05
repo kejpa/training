@@ -16,7 +16,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Kejpa\\Trainingapi\\": "src/",
+            "trainingAPI\\": "src/",
             "tests\\": "tests"
         }
     },

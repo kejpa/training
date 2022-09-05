@@ -1,12 +1,11 @@
 <?php
-
 declare (strict_types=1);
 
-namespace kejpa\training\Framework;
+namespace trainingAPI\Framework;
 
 use Noodlehaus\Config;
 use Noodlehaus\ConfigInterface;
-use Noodlehaus\Parser\Json;
+
 /**
  * Description of configuration
  *

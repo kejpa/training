@@ -41,18 +41,9 @@ $routeInfo = $dispatcher->dispatch(
 // Hantera ruttinfo
 switch ($routeInfo[0]) {
     case Dispatcher::NOT_FOUND:
-        $request->request->add(['url' => $request->getRequestUri()]);
-        $vars = $request;
-        $injector = include('Dependencies.php');
-        $controller = $injector->make('asfStatistik\FrontPage\FrontPageController');
-        $response = $controller->showStatic($request, $vars);
-        break;
     case Dispatcher::METHOD_NOT_ALLOWED:
-        $request->request->add(['url' => '405']);
-        $vars = $request;
-        $injector = include('Dependencies.php');
-        $controller = $injector->make('asfStatistik\FrontPage\FrontPageController');
-        $response = $controller->showStatic($request, $vars);
+        $content= file_get_contents(ROOT_DIR . "/src/info/info.html");
+        $response = new Response($content);
         break;
     case Dispatcher::FOUND:
         [$controllerName, $method] = explode('#', $routeInfo[1]);

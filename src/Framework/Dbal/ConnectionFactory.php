@@ -2,7 +2,7 @@
 
 declare (strict_types=1);
 
-namespace kejpa\training\Framework\Dbal;
+namespace trainingAPI\Framework\Dbal;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
