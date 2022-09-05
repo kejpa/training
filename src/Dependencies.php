@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use Kejpa\Trainingapi\Framework\Configuration;
+use kejpa\training\Framework\Configuration;
+use kejpa\training\Framework\Dbal\ConnectionFactory;
 use Auryn\Injector;
 use Doctrine\DBAL\Connection;
 
