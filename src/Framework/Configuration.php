@@ -1,4 +1,5 @@
 <?php
+
 declare (strict_types=1);
 
 namespace trainingAPI\Framework;
@@ -11,7 +12,7 @@ use Noodlehaus\ConfigInterface;
  *
  * @author kjell
  */
-final class Configuration implements ConfigInterface{
+final class Configuration implements ConfigInterface {
 
     private $file;
     private $config;

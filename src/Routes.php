@@ -6,8 +6,8 @@ return [
 // Sessions    
     [
         'GET',
-        'sessions/',
-        'Kejpa\Trainingapi\Session\SesssionController#getAllSessions'
+        '/sessions',
+        'trainingAPI\Session\SessionController#getAllSessions'
     ],
     [
         'GET',

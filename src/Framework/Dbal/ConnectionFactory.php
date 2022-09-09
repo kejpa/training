@@ -7,7 +7,7 @@ namespace trainingAPI\Framework\Dbal;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use kejpa\training\Framework\Configuration as Conf;
+use trainingAPI\Framework\Configuration as Conf;
 
 class ConnectionFactory {
 

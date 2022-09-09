@@ -42,13 +42,13 @@ $routeInfo = $dispatcher->dispatch(
 switch ($routeInfo[0]) {
     case Dispatcher::NOT_FOUND:
     case Dispatcher::METHOD_NOT_ALLOWED:
-        $content= file_get_contents(ROOT_DIR . "/src/info/info.html");
+        $content = file_get_contents(ROOT_DIR . "/src/info/info.html");
         $response = new Response($content);
         break;
     case Dispatcher::FOUND:
         [$controllerName, $method] = explode('#', $routeInfo[1]);
         $vars = $routeInfo[2];
-        $injector = include('Dependencies.php');
+        $injector = include(ROOT_DIR . '/src/Dependencies.php');
         $controller = $injector->make($controllerName);
         $response = $controller->$method($request, $vars);
         break;
