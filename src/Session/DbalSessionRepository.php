@@ -19,7 +19,7 @@ final class DbalSessionRepository implements SessionRepository {
         $this->connection = $connection;
     }
 
-    public function getAllSessions(int $userid) {
+    public function getAllSessions(int $userid): array {
         $qb = $this->connection->createQueryBuilder();
         $qb->addSelect("id")
                 ->addSelect("userid")
@@ -37,6 +37,27 @@ final class DbalSessionRepository implements SessionRepository {
         }
 
         return $sessions;
+    }
+
+    public function getAllSession(int $userid, int $sessionId): ?Session {
+        $qb = $this->connection->createQueryBuilder();
+        $qb->addSelect("id")
+                ->addSelect("userid")
+                ->addSelect("length")
+                ->addSelect("date")
+                ->addSelect("description");
+        $qb->from("sessions");
+        $qb->where('userid=' . $qb->createNamedParameter($userid))
+                ->andWhere('id=' . $qb->createNamedParameter($sessionId));
+
+        $stmt = $qb->execute();
+        $row = $stmt->fetch();
+        if (!$row) {
+            return null;
+        }
+        $session = Session::createFromRow($row);
+
+        return $session;
     }
 
 }
