@@ -6,28 +6,28 @@ return [
 // Sessions    
     [
         'GET',
-        '/sessions',
+        '/sessions/',
         'trainingAPI\Session\SessionController#getAllSessions'
     ],
     [
         'GET',
-        'sessions/{id:\d+}',
-        'Kejpa\Trainingapi\Session\SesssionController#getSession'
+        '/sessions/{id:\d+}',
+        'trainingAPI\Session\SessionController#getSession'
     ],
     [
         'POST',
-        'sessions/',
-        'Kejpa\Trainingapi\Session\SesssionController#addSession'
+        '/sessions/',
+        'trainingAPI\Session\SessionController#addSession'
     ],
     [
         'PUT',
         'sessions/{id:\d+}',
-        'Kejpa\Trainingapi\Session\SesssionController#updateSession'
+        'trainingAPI\Session\SessionController#updateSession'
     ],
     [
         'DELETE',
         'sessions/{id:\d+}',
-        'Kejpa\Trainingapi\Session\SesssionController#deleteSession'
+        'trainingAPI\Session\SessionController#deleteSession'
     ],
     // Login
     [

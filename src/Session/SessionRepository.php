@@ -8,5 +8,8 @@ namespace trainingAPI\Session;
  */
 interface SessionRepository {
     public function getAllSessions(int $userid):array;
-    public function getAllSession(int $userid, int $sessionId):?Session;
+    public function getSession(int $userid, int $sessionId):?Session;
+    public function addSession(int $userid, Session $session):int;
+    public function updateSession(int $userid, Session $session): bool;
+    public function deleteSession(int $userid, Session $session): bool;
 }
