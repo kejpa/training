@@ -39,7 +39,7 @@ final class DbalSessionRepository implements SessionRepository {
         return $sessions;
     }
 
-    public function getSession(int $userid, int $sessionId):?Session {
+    public function getSession(int $userid, int $sessionId): ?Session {
         $qb = $this->connection->createQueryBuilder();
         $qb->addSelect("id")
                 ->addSelect("userid")
@@ -61,27 +61,33 @@ final class DbalSessionRepository implements SessionRepository {
     }
 
     public function addSession(int $userid, Session $session): int {
-                $qb= $this->connection->createQueryBuilder();
+        $qb = $this->connection->createQueryBuilder();
         $qb->insert('sessions');
         $qb->values([
-            "length"=>$qb->createNamedParameter($session->getLength()), 
-            "date"=>$qb->createNamedParameter($session->getDate()->format("Y-m-d")),
-            "description"=>$qb->createNamedParameter($session->getDescription()),
-            "userid"=>$qb->createNamedParameter($session->getUserid()),
-                ]);
-        
-        
-            $stmt = $qb->execute();
-            return (int) $this->connection->lastInsertId();
+            "length" => $qb->createNamedParameter($session->getLength()),
+            "date" => $qb->createNamedParameter($session->getDate()->format("Y-m-d")),
+            "description" => $qb->createNamedParameter($session->getDescription()),
+            "userid" => $qb->createNamedParameter($session->getUserid()),
+        ]);
+
+        $stmt = $qb->execute();
+        return (int) $this->connection->lastInsertId();
+    }
+
+    public function deleteSession(int $userid, Session $session): int {
         
     }
 
-    public function deleteSession(int $userid, Session $session): bool {
-        
-    }
+    public function updateSession(int $userid, Session $session): int {
+        $qb = $this->connection->createQueryBuilder();
+        $qb->update('sessions');
+        $qb->set('length', $qb->createNamedParameter($session->getLength()))
+                ->set('date', $qb->createNamedParameter($session->getDate()->format("Y-m-d")))
+                ->set('description', $qb->createNamedParameter($session->getDescription()));
+        $qb->where('id=' . $qb->createNamedParameter($session->getId()))
+                ->andWhere('userid =' . $qb->createNamedParameter($session->getUserid()));
 
-    public function updateSession(int $userid, Session $session): bool {
-        
+        return $qb->executeStatement();
     }
 
 }

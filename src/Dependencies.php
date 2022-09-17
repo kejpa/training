@@ -8,7 +8,9 @@ use trainingAPI\Framework\Configuration;
 use trainingAPI\Framework\Dbal\ConnectionFactory;
 use trainingAPI\Login\DbalLoginRepository;
 use trainingAPI\Login\LoginRepository;
+use trainingAPI\Session\DbalSessionIdExists;
 use trainingAPI\Session\DbalSessionRepository;
+use trainingAPI\Session\SessionIdExists;
 use trainingAPI\Session\SessionRepository;
 
 $injector = new Injector();
@@ -21,5 +23,6 @@ $injector->delegate(Connection::class, function () use ($injector): Connection {
 $injector->share(Connection::class);
 $injector->alias(LoginRepository::class, DbalLoginRepository::class);
 $injector->alias(SessionRepository::class, DbalSessionRepository::class);
+$injector->alias(SessionIdExists::class, DbalSessionIdExists::class);
 
 return $injector;

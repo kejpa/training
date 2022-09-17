@@ -6,7 +6,6 @@ namespace trainingAPI\Framework\ChainOfResponse\Validator;
 
 use DateTimeImmutable;
 use Exception;
-use trainingAPI\Framework\ChainOfResponse\ChainOfResponseDateValidator;
 use trainingAPI\Framework\ChainOfResponse\ChainOfResponseValidator;
 
 /**
@@ -14,7 +13,7 @@ use trainingAPI\Framework\ChainOfResponse\ChainOfResponseValidator;
  * Kontrollerar om inmatat datum är tidigare än dagens datum
  * @author kjell
  */
-final class DateIsInPastValidator extends ChainOfResponseDateValidator implements ChainOfResponseValidator {
+final class DateIsInPastValidator extends ChainOfResponseValidator  {
 
     public function check(string $date): bool {
         try {

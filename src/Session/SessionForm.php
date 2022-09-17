@@ -46,7 +46,7 @@ final class SessionForm {
     }
 
     public function toCommand(int $userId): Session {
-        return new Session(-1, $userId, (int) $this->length, new DateTimeImmutable($this->date), $this->description);
+        return new Session($this->id===""? -1:(int) $this->id , $userId, (int) $this->length, new DateTimeImmutable($this->date), $this->description);
     }
 
 }

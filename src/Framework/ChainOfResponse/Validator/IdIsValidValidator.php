@@ -4,22 +4,21 @@ declare (strict_types=1);
 
 namespace trainingAPI\Framework\ChainOfResponse\Validator;
 
-use DateTimeImmutable;
 use Exception;
 use trainingAPI\Framework\ChainOfResponse\ChainOfResponseValidator;
 
 /**
- * FileExistsValidator
- * Kontrollerar om angivet datum är ett giltigt datum 
+ * IdIsValidValidator
+ * Kontrollerar om angivet id är ett heltal
  * @author kjell
  */
-final class DateIsValidValidator extends ChainOfResponseValidator{
+final class IdIsValidValidator extends ChainOfResponseValidator{
 
-    public function check(string $date): bool {
+    public function check(string $id): bool {
         try {
-            $datum = new DateTimeImmutable($date);
-            if ($datum->format("Y-m-d") !== $date) {
-                $this->appendError([__CLASS__ ,"Ogiltigt datum ($date)"]);
+            $value = filter_var($id, FILTER_VALIDATE_INT);
+            if ($value=== false) {
+                $this->appendError([__CLASS__ ,"Ogiltigt angivet id ($id)"]);
                 return false;
             }
         } catch (Exception $e) {
