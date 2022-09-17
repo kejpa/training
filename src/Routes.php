@@ -26,7 +26,7 @@ return [
     ],
     [
         'DELETE',
-        'sessions/{id:\d+}',
+        '/sessions/{id:\d+}',
         'trainingAPI\Session\SessionController#deleteSession'
     ],
     // Login

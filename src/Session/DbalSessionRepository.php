@@ -74,8 +74,13 @@ final class DbalSessionRepository implements SessionRepository {
         return (int) $this->connection->lastInsertId();
     }
 
-    public function deleteSession(int $userid, Session $session): int {
-        
+    public function deleteSession(int $id, int $userId): int {
+        $qb = $this->connection->createQueryBuilder();
+        $qb->delete('sessions');
+        $qb->where('id=' . $qb->createNamedParameter($id))
+                ->andWhere('userid =' . $qb->createNamedParameter($userId));
+
+        return $qb->executeStatement();
     }
 
     public function updateSession(int $userid, Session $session): int {

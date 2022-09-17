@@ -150,4 +150,37 @@ final class SessionController {
         }
     }
 
+    public function deleteSession(Request $request, array $param) {
+        $userToken = $request->headers->get("user-token") ?? "Abcd1234";
+        $user = $this->loginController->getUserByToken($userToken);
+        $id = false;
+
+        if (!$user || $user->getToken() !== $userToken) {
+            $err = new stdClass();
+            $err->message = ['Validation failed', "No match for token $userToken"];
+            return new JsonResponse($err, 405);
+        }
+
+        if (array_key_exists('id', $param)) {
+            $id = filter_var($param['id'], FILTER_VALIDATE_INT);
+        }
+        if ($id === false) {
+            $err = new stdClass();
+            $err->message = ['Validation failed', "Invalid id supplied"];
+            return new JsonResponse($err, 400);
+        }
+
+        try {
+            $rows = $this->sessionRepository->deleteSession($id, $user->getId());
+
+            $out = new stdClass();
+            $out->rowsAffected=$rows;
+            return new JsonResponse($out);
+        } catch (Exception $ex) {
+            $err = new stdClass();
+            $err->message = $ex->getMessage();
+            return new JsonResponse($err, 400);
+        }
+    }
+
 }
