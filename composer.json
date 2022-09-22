@@ -18,7 +18,7 @@
     "autoload": {
         "psr-4": {
             "trainingAPI\\": "src/",
-            "tests\\": "tests"
+            "tests\\": "tests/"
         }
     },
     "authors": [

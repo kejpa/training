@@ -4,11 +4,11 @@ declare (strict_types=1);
 
 namespace trainingAPI\Session;
 
-use Doctrine\DBAL\Connection;
+use Exception;
 use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use TheSeer\Tokenizer\Exception;
+use trainingAPI\Framework\ChainOfResponse\Validator\IdExistsValidator;
 use trainingAPI\Login\LoginController;
 
 /**
@@ -20,12 +20,12 @@ final class SessionController {
 
     private $loginController;
     private $sessionRepository;
-    private $sesssionValidatorFactory;
+    private $idExistsValidator;
 
-    public function __construct(LoginController $loginController, SessionRepository $sessionRepository, SessionValidatorFactory $sesssionValidatorFactory) {
+    public function __construct(LoginController $loginController, SessionRepository $sessionRepository, IdExistsValidator $idExistsValidator) {
         $this->loginController = $loginController;
         $this->sessionRepository = $sessionRepository;
-        $this->sesssionValidatorFactory = $sesssionValidatorFactory;
+        $this->idExistsValidator = $idExistsValidator;
     }
 
     public function getAllSessions(Request $request): JsonResponse {
@@ -80,7 +80,7 @@ final class SessionController {
             return new JsonResponse($err, 405);
         }
 
-        $validators = ["date" => $this->sesssionValidatorFactory->createSessionDateValidator()];
+        $validators = ["date" => SessionValidatorFactory::createSessionDateValidator()];
         $form = SessionFormFactory::createFromRequest($request, $validators);
 
         if ($form->hasValidationErrors()) {
@@ -124,8 +124,8 @@ final class SessionController {
             return new JsonResponse($err, 400);
         }
 
-        $validators = ["date" => $this->sesssionValidatorFactory->createSessionDateValidator()];
-        $validators["id"] = $this->sesssionValidatorFactory->createSessionIdValidator($user->getId());
+        $validators = ["date" => SessionValidatorFactory::createSessionDateValidator()];
+        $validators["id"] = SessionValidatorFactory::createSessionIdValidator($user->getId(), $this->idExistsValidator);
         $form = SessionFormFactory::createFromRequest($request, $validators);
 
         if ($form->hasValidationErrors()) {

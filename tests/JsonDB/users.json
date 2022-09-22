@@ -1,0 +1,24 @@
+[ 
+    { 
+        "id": 1,
+        "email": "kjell@kejpa.com",
+        "firstname": "Kjell",
+        "lastname": "Hansen",
+        "password": "pwd",
+        "token": "Abcd1234",
+        "tokendate": "2022-09-09 21:45:16",
+        "resettoken": null,
+        "resetdate": null
+    },
+    { 
+        "id": 2,
+        "email": "annan",
+        "firstname": "Annan",
+        "lastname": "Annan",
+        "password": "ann",
+        "token": "Bcde2345",
+        "tokendate": "2022-09-13 21:23:16",
+        "resettoken": null,
+        "resetdate": null
+    }
+]
