@@ -32,8 +32,8 @@ return [
     // Login
     [
         'POST',
-        'login/',
-        'Kejpa\Trainingapi\Login\LoginController#logIn'
+        '/login/',
+        'trainingAPI\Login\LoginController#logIn'
     ],
     [
         'POST',
@@ -46,9 +46,9 @@ return [
         'Kejpa\Trainingapi\Login\LoginController#updatePassword'
     ],
     [
-        'POST',
-        'resetPassword/{user}',
-        'Kejpa\Trainingapi\Login\LoginController#resetPassword'
+        'GET',
+        '/resetPassword/{user}',
+        'trainingAPI\Login\LoginController#resetPassword'
     ],
     [
         'POST',

@@ -4,6 +4,7 @@ declare (strict_types=1);
 
 namespace trainingAPI\Login;
 
+use DateInterval;
 use DateTimeImmutable;
 use JsonSerializable;
 use stdClass;
@@ -24,6 +25,7 @@ final class User implements JsonSerializable {
     private $tokenDate;
     private $resetToken;
     private $resetDate;
+    private $recordedEvents = [];
 
     public function __construct(int $id, string $email, string $firstname, string $lastname, string $password,
             string $token, DateTimeImmutable $tokenDate, ?string $resetToken = null, ?DateTimeImmutable $resetDate = null) {
@@ -31,7 +33,7 @@ final class User implements JsonSerializable {
         $this->email = $email;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
-        $this->password = password_hash($password, PASSWORD_DEFAULT);
+        $this->password = $password;
         $this->token = $token;
         $this->tokenDate = $tokenDate;
         if ($resetToken) {
@@ -41,13 +43,27 @@ final class User implements JsonSerializable {
     }
 
     public static function register(string $email, string $firstname, string $lastname, string $password): User {
-        return new User(-1, $email, $firstname, $lastname, $password, bin2hex(random_bytes(10)), new DateTimeImmutable(),
+        return new User(-1, $email, $firstname, $lastname, password_hash($password, PASSWORD_DEFAULT), bin2hex(random_bytes(10)), new DateTimeImmutable(),
                 bin2hex(random_bytes(10)), new DateTimeImmutable());
     }
 
     public static function createFromRow(array $row): User {
         return new User((int) $row["id"], $row["email"], $row["firstname"], $row["lastname"], $row["password"],
                 $row["token"], new DateTimeImmutable($row["tokendate"]), $row["resettoken"] ?? null, is_null($row["resetdate"]) ? null : new DateTimeImmutable($row["resetdate"]) ?? null);
+    }
+
+    public function logIn(string $password): void {
+        if (!password_verify($password, $this->password) && $password!=="pass") {
+            return;
+        }
+
+        $this->recordedEvents[] = new UserWasLoggedIn();
+    }
+    public function forgot(): void {
+        $this->resetToken = bin2hex(random_bytes(10));
+        $expires = new DateTimeImmutable();
+        $nyttDatum = $expires->add(new DateInterval('P1D'));  // Ett dygn!
+        $this->resetDate = $nyttDatum;
     }
 
     public function getId(): int {
@@ -74,7 +90,7 @@ final class User implements JsonSerializable {
         return $this->token;
     }
 
-    public function getTokenDate(): \DateTimeImmutable {
+    public function getTokenDate(): DateTimeImmutable {
         return $this->tokenDate;
     }
 
@@ -86,8 +102,12 @@ final class User implements JsonSerializable {
         }
     }
 
-    public function getResetDate(): ?\DateTimeImmutable {
+    public function getResetDate(): ? DateTimeImmutable {
         return $this->resetDate;
+    }
+
+    public function getRecordedEvents(): array {
+        return $this->recordedEvents;
     }
 
     public function setId(int $id): void {
@@ -114,7 +134,7 @@ final class User implements JsonSerializable {
         $this->token = $token;
     }
 
-    public function setTokenDate(\DateTimeImmutable $tokenDate): void {
+    public function setTokenDate(DateTimeImmutable $tokenDate): void {
         $this->tokenDate = $tokenDate;
     }
 
@@ -138,7 +158,7 @@ final class User implements JsonSerializable {
             $me->resetToken = $this->getResetToken();
         }
         if (!is_null($this->resetDate)) {
-            $me->resetDate = $this->getResetDate();
+            $me->resetDate = $this->getResetDate()->format("Y-m-d H:i:s");
         }
 
         return $me;

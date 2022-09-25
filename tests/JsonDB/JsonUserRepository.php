@@ -4,7 +4,7 @@ declare (strict_types=1);
 
 namespace tests\JsonDB;
 
-use trainingAPI\Login\LoginRepository;
+use trainingAPI\Login\UserRepository;
 use trainingAPI\Login\User;
 
 /**
@@ -12,7 +12,7 @@ use trainingAPI\Login\User;
  *
  * @author kjell
  */
-final class JsonLoginRepository implements LoginRepository {
+final class JsonUserRepository implements UserRepository {
 
     private $db;
 

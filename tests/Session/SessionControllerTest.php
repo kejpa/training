@@ -6,7 +6,7 @@ namespace tests\Session;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use tests\JsonDB\JsonLoginRepository;
+use tests\JsonDB\JsonUserRepository;
 use tests\JsonDB\JsonSessionIdExists;
 use tests\JsonDB\JsonSessionRepository;
 use trainingAPI\Framework\ChainOfResponse\Validator\IdExistsValidator;
@@ -28,7 +28,7 @@ final class SessionControllerTest extends TestCase {
     public function __construct() {
         parent::__construct();
 
-        $this->loginRepository = new JsonLoginRepository();
+        $this->loginRepository = new JsonUserRepository();
         $this->sessionRepository = new JsonSessionRepository();
         $this->loginController = new LoginController($this->loginRepository);
         $jsonSessionIdExists = new JsonSessionIdExists();
