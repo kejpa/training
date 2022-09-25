@@ -18,16 +18,18 @@ final class SessionFormFactory {
             case "POST":
             case "GET":
                 return new SessionForm(
-                        (string) $request->get('id', ''),
-                        (string) $request->get('date', ''),
-                        (string) $request->get('length', ''),
-                        (string) $request->get('description', ''),
+                        (string) $request->query->get('id', ''),
+                        (string) $request->request->get('id', ''),
+                        (string) $request->request->get('date', ''),
+                        (string) $request->request->get('length', ''),
+                        (string) $request->request->get('description', ''),
                         $validators);
                 break;
             case "PUT":
             case "DELETE":
                 $body = json_decode($request->getContent());
                 return new SessionForm(
+                        (string) $request->query->get('id', ''),
                         (string) $body->id ?? '',
                         (string) $body->date ?? '',
                         (string) $body->length ?? '',

@@ -29,9 +29,8 @@ final class SessionController {
     }
 
     public function getAllSessions(Request $request): JsonResponse {
-        $userToken = $request->headers->get("user-token") ?? "Abcd1234";
+        $userToken = $request->headers->get("user-token") ?? "";
         $user = $this->loginController->getUserByToken($userToken);
-
         if (!$user || $user->getToken() !== $userToken) {
             $err = new stdClass();
             $err->message = ['Validation failed', "No match for token $userToken"];
@@ -45,7 +44,7 @@ final class SessionController {
     }
 
     public function getSession(Request $request, array $param): JsonResponse {
-        $userToken = $request->headers->get("user-token") ?? "Abcd1234";
+        $userToken = $request->headers->get("user-token") ?? "";
         $user = $this->loginController->getUserByToken($userToken);
         $id = false;
 
@@ -71,7 +70,7 @@ final class SessionController {
     }
 
     public function addSession(Request $request) {
-        $userToken = $request->headers->get("user-token") ?? "Abcd1234";
+        $userToken = $request->headers->get("user-token") ?? "";
         $user = $this->loginController->getUserByToken($userToken);
 
         if (!$user || $user->getToken() !== $userToken) {
@@ -86,7 +85,7 @@ final class SessionController {
         if ($form->hasValidationErrors()) {
             $err = new stdClass();
             $err->message = $form->getValidationErrors();
-            return new JsonResponse($err, 405);
+            return new JsonResponse($err, 400);
         }
 
         try {
@@ -105,7 +104,7 @@ final class SessionController {
     }
 
     public function updateSession(Request $request, array $param) {
-        $userToken = $request->headers->get("user-token") ?? "Abcd1234";
+        $userToken = $request->headers->get("user-token") ?? "";
         $user = $this->loginController->getUserByToken($userToken);
         $id = false;
 
@@ -123,6 +122,7 @@ final class SessionController {
             $err->message = ['Validation failed', "Invalid id supplied"];
             return new JsonResponse($err, 400);
         }
+        $request->query->add($param);
 
         $validators = ["date" => SessionValidatorFactory::createSessionDateValidator()];
         $validators["id"] = SessionValidatorFactory::createSessionIdValidator($user->getId(), $this->idExistsValidator);
@@ -133,7 +133,6 @@ final class SessionController {
             $err->message = $form->getValidationErrors();
             return new JsonResponse($err, 400);
         }
-
         try {
             $session = $form->toCommand($user->getId());
             $session->setId($id);
@@ -151,7 +150,7 @@ final class SessionController {
     }
 
     public function deleteSession(Request $request, array $param) {
-        $userToken = $request->headers->get("user-token") ?? "Abcd1234";
+        $userToken = $request->headers->get("user-token") ?? "";
         $user = $this->loginController->getUserByToken($userToken);
         $id = false;
 

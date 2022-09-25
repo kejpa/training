@@ -13,18 +13,21 @@ use DateTimeImmutable;
  */
 final class SessionForm {
 
+    private $queryId;
     private $id;
     private $date;
     private $length;
     private $description;
     private $validators;
 
-    public function __construct(string $id, string $date, string $length, string $description, array $validators) {
+    public function __construct(string $queryId, string $id, string $date, string $length, string $description, array $validators) {
+        $this->queryId = $queryId;
         $this->id = $id;
         $this->date = $date;
         $this->length = $length;
         $this->description = $description;
         $this->validators = $validators;
+        $this->errors=[];
     }
 
     public function hasValidationErrors(): bool {
@@ -33,7 +36,8 @@ final class SessionForm {
                 return true;
             }
         }
-        return false;
+
+        return ($this->queryId!==$this->id);
     }
 
     public function getValidationErrors(): array {
@@ -41,7 +45,9 @@ final class SessionForm {
         foreach ($this->validators as $key => $validator) {
             $errors = array_merge($errors, $validator->getErrors());
         }
-
+        if($this->queryId!== $this->id) {
+            $errors[]="Bodyid and query id, don't match";
+        }
         return $errors;
     }
 

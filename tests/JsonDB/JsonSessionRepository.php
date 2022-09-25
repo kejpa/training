@@ -38,7 +38,18 @@ final class JsonSessionRepository implements SessionRepository {
     }
 
     public function deleteSession(int $id, int $userId): int {
-        
+        $antal = 0;
+        $index = 0;
+        foreach ($this->db as $rec) {
+            if ($rec->userid === $userId && $rec->id === $id) {
+                array_slice($this->db, $index, 1);
+                $antal++;
+            } else {
+                $index++;
+            }
+        }
+
+        return $antal;
     }
 
     public function getAllSessions(int $userid): array {
@@ -53,7 +64,7 @@ final class JsonSessionRepository implements SessionRepository {
 
     public function getSession(int $userid, int $sessionId): ?Session {
         foreach ($this->db as $rec) {
-            if ($rec->userid === $userid) {
+            if ($rec->userid === $userid && $rec->id === $sessionId) {
                 return new Session($rec->id, $rec->userid, $rec->length,
                         new DateTimeImmutable($rec->date), $rec->description);
             }
