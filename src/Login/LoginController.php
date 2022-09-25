@@ -54,7 +54,9 @@ final class LoginController {
 
     public function resetPassword(Request $request, array $param): JsonResponse {
         $request->query->add($param);
-        $user = str_replace("*", ".", $request->query->get('user'));
+        // OBS!!!! Ta bort när en "riktig" webbserver används!!!
+        // . i URL-parametrar fungerar inte i php:s inbyggda webbserver
+        $user = str_replace("*", ".", $request->query->get('user')); 
         $username = filter_var($user, FILTER_VALIDATE_EMAIL);
 
         $user = $this->loginHandler->handle(new Login($username, ""));
