@@ -42,13 +42,18 @@ return [
     ],
     [
         'POST',
-        'register/{user}',
-        'Kejpa\Trainingapi\Login\LoginController#updatePassword'
+        '/changePassword/',
+        'trainingAPI\Login\LoginController#updatePassword'
     ],
     [
         'GET',
         '/resetPassword/{user}',
         'trainingAPI\Login\LoginController#resetPassword'
+    ],
+    [
+        'POST',
+        '/resetPassword/{user}',
+        'trainingAPI\Login\LoginController#changePassword'
     ],
     [
         'POST',

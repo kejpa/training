@@ -66,6 +66,13 @@ final class User implements JsonSerializable {
         $this->resetDate = $nyttDatum;
     }
 
+    public function changePassword(string $password):void {
+        $this->setPassword($password);
+        $this->setResetToken(null);
+        $this->setResetDate(null);
+        $this->setToken(bin2hex(random_bytes(10)));
+        $this->setTokenDate(new DateTimeImmutable());
+    }
     public function getId(): int {
         return $this->id;
     }
@@ -90,7 +97,7 @@ final class User implements JsonSerializable {
         return $this->token;
     }
 
-    public function getTokenDate(): DateTimeImmutable {
+    public function getTokenDate(): ?DateTimeImmutable {
         return $this->tokenDate;
     }
 
@@ -134,7 +141,7 @@ final class User implements JsonSerializable {
         $this->token = $token;
     }
 
-    public function setTokenDate(DateTimeImmutable $tokenDate): void {
+    public function setTokenDate(?DateTimeImmutable $tokenDate): void {
         $this->tokenDate = $tokenDate;
     }
 
@@ -153,14 +160,8 @@ final class User implements JsonSerializable {
         $me->firstname = $this->getFirstname();
         $me->lastname = $this->getLastname();
         $me->token = $this->getToken();
-        $me->tokenDate = $this->getTokenDate()->format("Y-m-d H:i");
-        if (!is_null($this->resetToken)) {
-            $me->resetToken = $this->getResetToken();
-        }
-        if (!is_null($this->resetDate)) {
-            $me->resetDate = $this->getResetDate()->format("Y-m-d H:i:s");
-        }
-
+        $me->tokenDate = $this->getTokenDate()===null ? "":$this->getTokenDate()->format("Y-m-d H:i") ?? "";
+        // ResetToken och ResetDate ska inte skickas till klienten.
         return $me;
     }
 

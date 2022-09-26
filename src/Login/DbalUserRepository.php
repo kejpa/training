@@ -71,11 +71,11 @@ final class DbalUserRepository implements UserRepository {
                 ->set('lastname', $qb->createNamedParameter($user->getLastname()))
                 ->set('password', $qb->createNamedParameter($user->getPassword()))
                 ->set('token', $qb->createNamedParameter($user->getToken()))
-                ->set('tokendate', $qb->createNamedParameter($user->getTokenDate()->format("Y-m-d")))
+                ->set('tokendate', $qb->createNamedParameter($user->getTokenDate()===null ? null: $user->getTokenDate()->format("Y-m-d H:i:s")))
                 ->set('resettoken', $qb->createNamedParameter($user->getResetToken()))
-                ->set('resetdate', $qb->createNamedParameter($user->getResetDate()->format("Y-m-d")));
+                ->set('resetdate', $qb->createNamedParameter($user->getResetDate()===null ? null :$user->getResetDate()->format("Y-m-d H:i:s")));
         $qb->where('id=' . $qb->createNamedParameter($user->getId()));
-//        var_dump($qb->getSQL(), $qb->getParameters());        exit;
+
         return $qb->executeStatement();
     }
 
