@@ -62,6 +62,41 @@
                     }
                 </td>
                 <td>Adds a session to the database</td>
+            <tr>
+                <td>/sessions/{id}</td>
+                <td>PUT</td>
+                <td>
+                    id (int)<br>
+                    length (int)<br>
+                    date (yyyy-mm-dd)<br>
+                    description (text)
+                </td>
+                <td>
+                    session: {<br>
+                    id (int)<br>
+                    length (int)<br>
+                    date (yyyy-mm-dd)<br>
+                    description (text)<br>
+                    }
+                </td>
+                <td>Updates a session in the database</td>
+            </tr>
+            <tr>
+                <td>/sessions/{id}</td>
+                <td>DELETE</td>
+                <td>&nbsp;</td>
+                <td>
+                    session: {<br>
+                    id (int)<br>
+                    length (int)<br>
+                    date (yyyy-mm-dd)<br>
+                    description (text)<br>
+                    }
+                </td>
+                <td>Deletes a session from the database</td>
+            </tr>
+            <tr>
+                <td colspan="5"><hr></td>
             </tr>
         </table>
     </body>

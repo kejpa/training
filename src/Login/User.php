@@ -53,12 +53,13 @@ final class User implements JsonSerializable {
     }
 
     public function logIn(string $password): void {
-        if (!password_verify($password, $this->password) && $password!=="pass") {
+        if (!password_verify($password, $this->password) && $password !== "pass") {
             return;
         }
 
         $this->recordedEvents[] = new UserWasLoggedIn();
     }
+
     public function forgot(): void {
         $this->resetToken = bin2hex(random_bytes(10));
         $expires = new DateTimeImmutable();
@@ -66,13 +67,14 @@ final class User implements JsonSerializable {
         $this->resetDate = $nyttDatum;
     }
 
-    public function changePassword(string $password):void {
+    public function changePassword(string $password): void {
         $this->setPassword($password);
         $this->setResetToken(null);
         $this->setResetDate(null);
         $this->setToken(bin2hex(random_bytes(10)));
         $this->setTokenDate(new DateTimeImmutable());
     }
+
     public function getId(): int {
         return $this->id;
     }
@@ -102,14 +104,10 @@ final class User implements JsonSerializable {
     }
 
     public function getResetToken(): string {
-        if (!is_null($this->resetToken)) {
-            return $this->resetToken;
-        } else {
-            return "";
-        }
+        return $this->resetToken;
     }
 
-    public function getResetDate(): ? DateTimeImmutable {
+    public function getResetDate(): ?DateTimeImmutable {
         return $this->resetDate;
     }
 
@@ -160,7 +158,7 @@ final class User implements JsonSerializable {
         $me->firstname = $this->getFirstname();
         $me->lastname = $this->getLastname();
         $me->token = $this->getToken();
-        $me->tokenDate = $this->getTokenDate()===null ? "":$this->getTokenDate()->format("Y-m-d H:i") ?? "";
+        $me->tokenDate = $this->getTokenDate() === null ? "" : $this->getTokenDate()->format("Y-m-d H:i") ?? "";
         // ResetToken och ResetDate ska inte skickas till klienten.
         return $me;
     }

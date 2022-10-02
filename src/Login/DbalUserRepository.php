@@ -79,4 +79,21 @@ final class DbalUserRepository implements UserRepository {
         return $qb->executeStatement();
     }
 
+    public function addUser(User $user): int {
+         $qb = $this->connection->createQueryBuilder();
+        $qb->insert('users');
+        $qb->values(['email' => $qb->createNamedParameter($user->getEmail()),
+                'firstname' => $qb->createNamedParameter($user->getFirstname()), 
+                'lastname'=> $qb->createNamedParameter($user->getLastname()), 
+                'password' => $qb->createNamedParameter($user->getPassword()), 
+                'token' => $qb->createNamedParameter($user->getToken()), 
+                'tokendate' => $qb->createNamedParameter($user->getTokenDate()->format("Y-m-d H:i:s"))
+                ]);
+
+        $qb->executeStatement();
+        
+        return (int) $qb->getConnection()->lastInsertId();
+       
+    }
+
 }

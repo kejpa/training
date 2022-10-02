@@ -31,13 +31,14 @@ final class SessionForm {
     }
 
     public function hasValidationErrors(): bool {
+        $return=($this->queryId!==$this->id);
         foreach ($this->validators as $key => $validator) {
             if (!$validator->validate($this->$key)) {
-                return true;
+                $return=true;
             }
         }
 
-        return ($this->queryId!==$this->id);
+        return $return;
     }
 
     public function getValidationErrors(): array {

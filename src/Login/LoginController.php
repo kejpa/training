@@ -18,10 +18,12 @@ final class LoginController {
 
     private $userRepository;
     private $loginHandler;
+    private $emailExistsQuery;
 
-    public function __construct(UserRepository $userRepository, LoginHandler $loginHandler) {
+    public function __construct(UserRepository $userRepository, LoginHandler $loginHandler, EmailExistsQuery $emailExistsQuery) {
         $this->userRepository = $userRepository;
         $this->loginHandler = $loginHandler;
+        $this->emailExistsQuery=$emailExistsQuery;
     }
 
     public function getUserByToken(string $token): ?User {
@@ -100,50 +102,87 @@ final class LoginController {
             return new JsonResponse($err, 400);
         }
 
-        $password=$request->request->get("password");
-        $passwordValidator=PasswordValidatorFactory::createPasswordValidator();
-        if(!$passwordValidator->validate($password)) {
+        $password = $request->request->get("password");
+        $passwordValidator = PasswordValidatorFactory::createPasswordValidator();
+        if (!$passwordValidator->validate($password)) {
             $err = new stdClass();
-            $err->message = array_merge( ['Validation failed'], $passwordValidator->getErrors() );
-            return new JsonResponse($err, 400);            
+            $err->message = array_merge(['Validation failed'], $passwordValidator->getErrors());
+            return new JsonResponse($err, 400);
         }
-        
+
         $user->changePassword($password);
-        $rowsAffected=$this->userRepository->updateUser($user);
- 
+        $rowsAffected = $this->userRepository->updateUser($user);
+
         $out = new stdClass();
         $out->rowsAffected = $rowsAffected;
-        $out->user=$user;
-        
+        $out->user = $user;
+
         return new JsonResponse($out);
- 
     }
+
     public function updatePassword(Request $request, array $param): JsonResponse {
         $userToken = $request->headers->get("user-token") ?? "";
         $user = $this->getUserByToken($userToken);
-        $username=$request->request->get("user");
+        $username = $request->request->get("user");
 
-        if (!$user || $user->getToken() !== $userToken || $user->getEmail()!==$username) {
+        if (!$user || $user->getToken() !== $userToken || $user->getEmail() !== $username) {
             $err = new stdClass();
             $err->message = ['Validation failed', "No match for token $userToken"];
             return new JsonResponse($err, 405);
         }
-        
-        $password=$request->request->get("password");
-        $passwordValidator=PasswordValidatorFactory::createPasswordValidator();
-        if(!$passwordValidator->validate($password)) {
+
+        $password = $request->request->get("password");
+        $passwordValidator = PasswordValidatorFactory::createPasswordValidator();
+        if (!$passwordValidator->validate($password)) {
             $err = new stdClass();
-            $err->message = array_merge( ['Validation failed'], $passwordValidator->getErrors() );
-            return new JsonResponse($err, 400);            
+            $err->message = array_merge(['Validation failed'], $passwordValidator->getErrors());
+            return new JsonResponse($err, 400);
         }
-        
+
         $user->changePassword($password);
-        $rowsAffected=$this->userRepository->updateUser($user);
- 
+        $rowsAffected = $this->userRepository->updateUser($user);
+
         $out = new stdClass();
         $out->rowsAffected = $rowsAffected;
-        $out->user=$user;
+        $out->user = $user;
+
+        return new JsonResponse($out);
+    }
+
+    public function checkToken(Request $request) {
+        $userToken = $request->headers->get("user-token") ?? "";
+        $user = $this->getUserByToken($userToken);
+
+        if ($user === null) {
+            $err = new stdClass();
+            $err->message = ['Invalid token'];
+            return new JsonResponse($err, 400);
+        }
+
+        $out = new stdClass();
+        $out->user = $user;
+
+        return new JsonResponse($out);
+    }
+
+    public function register(Request $request) {
+        $validators["email"]= EmailValidatorFactory::createEmailDontExistsValidator($this->emailExistsQuery);
+        $validators["password"]= PasswordValidatorFactory::createPasswordValidator();
         
+        $userForm= UserForm::fromRequest($request->request->all(), $validators);
+        
+        if($userForm->hasValidationErrors()) {
+            $err = new stdClass();
+            $err->message = array_merge(['Validation failed'], $userForm->getValidationErrors());
+            return new JsonResponse($err, 400);
+        }
+        
+        $user=$userForm->toCommand();
+        $user->setId($this->userRepository->addUser($user));
+        
+        $out = new stdClass();
+        $out->user = $user;
+
         return new JsonResponse($out);
     }
 }

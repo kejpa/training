@@ -37,8 +37,8 @@ return [
     ],
     [
         'POST',
-        'register/',
-        'Kejpa\Trainingapi\Login\LoginController#register'
+        '/register/',
+        'trainingAPI\Login\LoginController#register'
     ],
     [
         'POST',
@@ -57,7 +57,7 @@ return [
     ],
     [
         'POST',
-        'checkToken/',
-        'Kejpa\Trainingapi\Login\LoginController#checkToken'
+        '/checkToken/',
+        'trainingAPI\Login\LoginController#checkToken'
     ],
 ];

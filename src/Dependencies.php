@@ -6,7 +6,9 @@ use Auryn\Injector;
 use Doctrine\DBAL\Connection;
 use trainingAPI\Framework\Configuration;
 use trainingAPI\Framework\Dbal\ConnectionFactory;
+use trainingAPI\Login\DbalEmailExistsQuery;
 use trainingAPI\Login\DbalUserRepository;
+use trainingAPI\Login\EmailExistsQuery;
 use trainingAPI\Login\UserRepository;
 use trainingAPI\Session\DbalSessionIdExists;
 use trainingAPI\Session\DbalSessionRepository;
@@ -24,5 +26,6 @@ $injector->share(Connection::class);
 $injector->alias(UserRepository::class, DbalUserRepository::class);
 $injector->alias(SessionRepository::class, DbalSessionRepository::class);
 $injector->alias(SessionIdExists::class, DbalSessionIdExists::class);
+$injector->alias(EmailExistsQuery::class, DbalEmailExistsQuery::class);
 
 return $injector;
