@@ -42,7 +42,7 @@ return [
     ],
     [
         'POST',
-        '/changePassword/',
+        '/changePassword/{user}',
         'trainingAPI\Login\LoginController#updatePassword'
     ],
     [
