@@ -32,8 +32,11 @@ final class UserForm {
     public static function fromRequest(array $request, array $validators = []): UserForm {
         return new UserForm($request["id"] ?? null, $request["email"], $request["firstname"], $request["lastname"], $request["password"], $validators);
     }
+    public function getId(): ?string {
+        return $this->id;
+    }
 
-    public function getEmail(): string {
+        public function getEmail(): string {
         return $this->email;
     }
 

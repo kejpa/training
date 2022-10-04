@@ -9,7 +9,8 @@ namespace trainingAPI\Login;
  *
  * @author kjell
  */
-final class LoginHandler {
+class LoginHandler {
+
     private $userRepository;
 
     public function __construct(UserRepository $userRepository) {
@@ -25,6 +26,5 @@ final class LoginHandler {
 
         return $user;
     }
-
 
 }

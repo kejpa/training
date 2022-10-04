@@ -43,8 +43,7 @@ final class User implements JsonSerializable {
     }
 
     public static function register(string $email, string $firstname, string $lastname, string $password): User {
-        return new User(-1, $email, $firstname, $lastname, password_hash($password, PASSWORD_DEFAULT), bin2hex(random_bytes(10)), new DateTimeImmutable(),
-                bin2hex(random_bytes(10)), new DateTimeImmutable());
+        return new User(-1, $email, $firstname, $lastname, password_hash($password, PASSWORD_DEFAULT), bin2hex(random_bytes(10)), new DateTimeImmutable());
     }
 
     public static function createFromRow(array $row): User {
@@ -53,7 +52,7 @@ final class User implements JsonSerializable {
     }
 
     public function logIn(string $password): void {
-        if (!password_verify($password, $this->password) && $password !== "pass") {
+        if (!password_verify($password, $this->password)) {
             return;
         }
 
@@ -103,7 +102,7 @@ final class User implements JsonSerializable {
         return $this->tokenDate;
     }
 
-    public function getResetToken(): string {
+    public function getResetToken(): ?string {
         return $this->resetToken;
     }
 
@@ -159,7 +158,7 @@ final class User implements JsonSerializable {
         $me->lastname = $this->getLastname();
         $me->token = $this->getToken();
         $me->tokenDate = $this->getTokenDate() === null ? "" : $this->getTokenDate()->format("Y-m-d H:i") ?? "";
-        // ResetToken och ResetDate ska inte skickas till klienten.
+        // Password, ResetToken och ResetDate ska inte skickas till klienten.
         return $me;
     }
 

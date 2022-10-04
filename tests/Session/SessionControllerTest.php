@@ -6,11 +6,13 @@ namespace tests\Session;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use tests\JsonDB\JsonUserRepository;
+use tests\JsonDB\JsonEmailExistsQuery;
 use tests\JsonDB\JsonSessionIdExists;
 use tests\JsonDB\JsonSessionRepository;
+use tests\JsonDB\JsonUserRepository;
 use trainingAPI\Framework\ChainOfResponse\Validator\IdExistsValidator;
 use trainingAPI\Login\LoginController;
+use trainingAPI\Login\LoginHandler;
 use trainingAPI\Session\SessionController;
 
 /**
@@ -30,7 +32,9 @@ final class SessionControllerTest extends TestCase {
 
         $this->loginRepository = new JsonUserRepository();
         $this->sessionRepository = new JsonSessionRepository();
-        $this->loginController = new LoginController($this->loginRepository);
+        $loginHandler=new LoginHandler($this->loginRepository);
+        $emailExists=new JsonEmailExistsQuery();
+        $this->loginController = new LoginController($this->loginRepository, $loginHandler,$emailExists);
         $jsonSessionIdExists = new JsonSessionIdExists();
         $this->idExistsValidator = new IdExistsValidator($jsonSessionIdExists);
     }
@@ -65,7 +69,6 @@ final class SessionControllerTest extends TestCase {
 
         $response = $test->addSession($request);
         $json = json_decode($response->getContent());
-        var_dump($json);
         $this->assertEquals(8, $json->session->id);
     }
 
@@ -125,7 +128,6 @@ final class SessionControllerTest extends TestCase {
 
         $response = $test->getSession($request, ["id" => "200"]);
         $json = json_decode($response->getContent());
-        var_dump($json);
         $this->assertNull($json->sessions);
     }
 
@@ -195,7 +197,6 @@ final class SessionControllerTest extends TestCase {
         $request->headers->add(["user-token" => "Abcd1234"]);
         $request->setMethod("PUT");
         $response = $test->updateSession($request, ["id" => 2]);
-        var_dump($response);
         $this->assertEquals(400, $response->getStatusCode());
     }
     public function testDeleteSession() {
