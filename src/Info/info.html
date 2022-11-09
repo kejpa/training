@@ -18,7 +18,7 @@
                 <th>Description</th>
             </tr>
             <tr>
-                <td>/sessions/</td>
+                <td>/sessions/ <a href="#note"><sup>*</sup></a></td>
                 <td>GET</td>
                 <td>&nbsp;</td>
                 <td>
@@ -32,7 +32,7 @@
                 <td>Get all sessions</td>
             </tr>
             <tr>
-                <td>/sessions/{id}</td>
+                <td>/sessions/{id} <a href="#note"><sup>*</sup></a></td>
                 <td>GET</td>
                 <td>id (int)</td>
                 <td>
@@ -46,7 +46,7 @@
                 <td>Information from a single session</td>
             </tr>
             <tr>
-                <td>/sessions/</td>
+                <td>/sessions/ <a href="#note"><sup>*</sup></a></td>
                 <td>POST</td>
                 <td>
                     length (int)<br>
@@ -63,7 +63,7 @@
                 </td>
                 <td>Adds a session to the database</td>
             <tr>
-                <td>/sessions/{id}</td>
+                <td>/sessions/{id} <a href="#note"><sup>*</sup></a></td>
                 <td>PUT</td>
                 <td>
                     id (int)<br>
@@ -82,7 +82,7 @@
                 <td>Updates a session in the database</td>
             </tr>
             <tr>
-                <td>/sessions/{id}</td>
+                <td>/sessions/{id} <a href="#note"><sup>*</sup></a></td>
                 <td>DELETE</td>
                 <td>&nbsp;</td>
                 <td>
@@ -98,6 +98,111 @@
             <tr>
                 <td colspan="5"><hr></td>
             </tr>
+            <tr>
+                <td>/login/</td>
+                <td>POST</td>
+                <td>
+                    username (string)<br>
+                    password (string)
+                </td>
+                <td>
+                    user: {<br>
+                    id (int)<br>
+                    email (string)<br>
+                    firstname (string)<br>
+                    lastname (string)<br>
+                    token (string)<br>
+                    tokendate (yyyy-mm-dd)<br>
+                    }
+                </td>
+                <td>Login user</td>
+            </tr>
+            <tr>
+                <td>/resetPassword/{user}</td>
+                <td>GET</td>
+                <td>&nbsp;</td>
+                <td>
+                    passwordReset (bool)
+                </td>
+                <td>Sends mail to user with info how to reset password</td>
+            </tr>
+            <tr>
+                <td>/resetPassword/{user}</td>
+                <td>POST</td>
+                <td>
+                    resettoken (string)<br>
+                    password (string)
+                </td>
+                <td>
+                    rowsaffected (int)<br>
+                    user: {<br>
+                    id (int)<br>
+                    email (string)<br>
+                    firstname (string)<br>
+                    lastname (string)<br>
+                    token (string)<br>
+                    tokendate (yyyy-mm-dd)<br>
+                    }
+                </td>
+                <td>Sets user password if forgotten</td>
+            </tr>
+            <tr>
+                <td>/changePassword/{user} <a href="#note"><sup>*</sup></a></td>
+                <td>POST</td>
+                <td>
+                    password (string)
+                </td>
+                <td>
+                    rowsaffected (int)<br>
+                    user: {<br>
+                    id (int)<br>
+                    email (string)<br>
+                    firstname (string)<br>
+                    lastname (string)<br>
+                    token (string)<br>
+                    tokendate (yyyy-mm-dd)<br>
+                    }
+                </td>
+                <td>Changes user password if already logged in</td>
+            </tr>
+            <tr>
+                <td>/checkToken/ <a href="#note"><sup>*</sup></a></td>
+                <td>POST</td>
+                <td>&nbsp;</td>
+                <td>
+                    user: {<br>
+                    id (int)<br>
+                    email (string)<br>
+                    firstname (string)<br>
+                    lastname (string)<br>
+                    token (string)<br>
+                    tokendate (yyyy-mm-dd)<br>
+                    }
+                </td>
+                <td>Checks if user-token is valid and returns user</td>
+            </tr>
+            <tr>
+                <td>/register/</td>
+                <td>POST</td>
+                <td>
+                    email (string)<br>,
+                    firstname (string)<br>,
+                    lastname (string)<br>,
+                    password (string)<br>,
+                </td>
+                <td>
+                    user: {<br>
+                    id (int)<br>
+                    email (string)<br>
+                    firstname (string)<br>
+                    lastname (string)<br>
+                    token (string)<br>
+                    tokendate (yyyy-mm-dd)<br>
+                    }
+                </td>
+                <td>Registers new user</td>
+            </tr>
         </table>
+        <p><sup id="note">*</sup> user-token (string) is requested as a head parameter</p>
     </body>
 </html>
