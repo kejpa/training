@@ -74,7 +74,7 @@ final class UserForm {
 
     public function toCommand(): User {
         if ($this->id === null) {
-            return new User(-1, $this->email, $this->firstname, $this->lastname, $this->password, bin2hex(random_bytes(10)), new DateTimeImmutable());
+            return User::register($this->email, $this->firstname, $this->lastname, $this->password);
         }
     }
 

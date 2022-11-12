@@ -17,7 +17,7 @@ class LoginHandler {
         $this->userRepository = $userRepository;
     }
 
-    public function handle(LogIn $command): ?User {
+    public function handle(Login $command): ?User {
         $user = $this->userRepository->getUserByEmail($command->getUsername());
         if ($user === null) {
             return null;

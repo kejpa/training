@@ -54,7 +54,7 @@ final class DbalUserRepository implements UserRepository {
                 ->addSelect("resetdate");
         $qb->from("users");
         $qb->where('email=' . $qb->createNamedParameter($email));
-
+        
         $stmt = $qb->execute();
         $row = $stmt->fetch();
         if (!$row) {

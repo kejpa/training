@@ -6,10 +6,7 @@ namespace trainingAPI\Login;
 
 final class Login {
 
-    private $username;
-    private $password;
-
-    public function __construct($username, $password) {
+    public function __construct(private string $username,private string $password) {
         $this->username = $username;
         $this->password = $password;
     }

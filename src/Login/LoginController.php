@@ -23,7 +23,7 @@ final class LoginController {
     public function __construct(UserRepository $userRepository, LoginHandler $loginHandler, EmailExistsQuery $emailExistsQuery) {
         $this->userRepository = $userRepository;
         $this->loginHandler = $loginHandler;
-        $this->emailExistsQuery=$emailExistsQuery;
+        $this->emailExistsQuery = $emailExistsQuery;
     }
 
     public function getUserByToken(string $token): ?User {
@@ -31,10 +31,13 @@ final class LoginController {
     }
 
     public function logIn(Request $request): JsonResponse {
-        $user = $this->loginHandler->handle(new Login(
-                         $request->request->get('username'),
-                         $request->request->get('password')
-        ));
+        $content = json_decode($request->getContent());
+        $username = $request->request->get("username", $content->username);
+        $password = $request->request->get("password", $content->password);
+
+        $user = $this->loginHandler->handle(
+                new Login($username, $password)
+        );
 
         if (!$user) {
             $err = new stdClass();
@@ -45,7 +48,7 @@ final class LoginController {
         foreach ($user->getRecordedEvents() as $event) {
             if ($event instanceof UserWasLoggedIn) {
                 $out = new stdClass();
-                $out->user = $user;
+                $out->user = $user; //->jsonSerialize();
                 return new JsonResponse($out);
             }
         }
@@ -60,7 +63,7 @@ final class LoginController {
         // OBS!!!! Ta bort när en "riktig" webbserver används!!!
         // . i URL-parametrar fungerar inte i php:s inbyggda webbserver
         $user = str_replace("*", ".", $request->query->get('user'));
-        $username = filter_var($user, FILTER_VALIDATE_EMAIL) ."";
+        $username = filter_var($user, FILTER_VALIDATE_EMAIL) . "";
 
         $user = $this->loginHandler->handle(new Login($username, ""));
 
@@ -83,7 +86,7 @@ final class LoginController {
         // OBS!!!! Ta bort när en "riktig" webbserver används!!!
         // . i URL-parametrar fungerar inte i php:s inbyggda webbserver
         $user = str_replace("*", ".", $request->query->get('user'));
-        $username = filter_var($user, FILTER_VALIDATE_EMAIL) ."";
+        $username = filter_var($user, FILTER_VALIDATE_EMAIL) . "";
 
         $user = $this->loginHandler->handle(new Login($username, ""));
         $resetToken = $request->request->get("resetToken");
@@ -127,7 +130,7 @@ final class LoginController {
         // OBS!!!! Ta bort när en "riktig" webbserver används!!!
         // . i URL-parametrar fungerar inte i php:s inbyggda webbserver
         $username = str_replace("*", ".", $request->query->get('user'));
-      $username = filter_var($username, FILTER_VALIDATE_EMAIL) ."";
+        $username = filter_var($username, FILTER_VALIDATE_EMAIL) . "";
 
         if (!$user || $user->getToken() !== $userToken || $user->getEmail() !== $username) {
             $err = new stdClass();
@@ -156,37 +159,51 @@ final class LoginController {
     public function checkToken(Request $request) {
         $userToken = $request->headers->get("user-token") ?? "";
         $user = $this->getUserByToken($userToken);
+        $origin = $request->headers->get('Origin', "*");
+        $headers = [];
+        $headers["Access-Control-Allow-Origin"] = $origin;
 
         if ($user === null) {
             $err = new stdClass();
             $err->message = ['Invalid token'];
-            return new JsonResponse($err, 405);
+            return new JsonResponse($err, 405, $headers);
         }
 
         $out = new stdClass();
         $out->user = $user;
 
-        return new JsonResponse($out);
+        return new JsonResponse($out, 200, $headers);
     }
 
     public function register(Request $request) {
-        $validators["email"]= EmailValidatorFactory::createEmailDontExistsValidator($this->emailExistsQuery);
-        $validators["password"]= PasswordValidatorFactory::createPasswordValidator();
-        
-        $userForm= UserForm::fromRequest($request->request->all(), $validators);
-        
-        if($userForm->hasValidationErrors()) {
+        $validators["email"] = EmailValidatorFactory::createEmailDontExistsValidator($this->emailExistsQuery);
+        $validators["password"] = PasswordValidatorFactory::createPasswordValidator();
+
+        $userForm = UserForm::fromRequest($request->request->all(), $validators);
+
+        if ($userForm->hasValidationErrors()) {
             $err = new stdClass();
             $err->message = array_merge(['Validation failed'], $userForm->getValidationErrors());
             return new JsonResponse($err, 400);
         }
-        
-        $user=$userForm->toCommand();
+
+        $user = $userForm->toCommand();
         $user->setId($this->userRepository->addUser($user));
-        
+
         $out = new stdClass();
         $out->user = $user;
 
         return new JsonResponse($out);
     }
+
+    public function preFlight(Request $request): JsonResponse {
+        $origin = $request->headers->get('Origin');
+        $headers = ["Access-Control-Allow-Origin"=> $origin,
+            "Access-Control-Allow-Methods"=> ["GET","PUT","POST","DELETE"],
+            "Access-Control-Allow-Headers" => "Content-Type, user-token"
+        ];
+
+        return new JsonResponse(null, 200, $headers);
+    }
+
 }

@@ -30,7 +30,7 @@ final class Configuration implements ConfigInterface {
         return $this->config->all();
     }
 
-    public function has($key): boolean {
+    public function has($key): bool {
         return $this->config->has($key);
     }
 

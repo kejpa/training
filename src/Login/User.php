@@ -53,6 +53,7 @@ final class User implements JsonSerializable {
 
     public function logIn(string $password): void {
         if (!password_verify($password, $this->password)) {
+            
             return;
         }
 

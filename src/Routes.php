@@ -60,4 +60,9 @@ return [
         '/checkToken/',
         'trainingAPI\Login\LoginController#checkToken'
     ],
+    [
+        'OPTIONS',
+        '/checkToken/',
+        'trainingAPI\Login\LoginController#preFlight'
+    ],
 ];
