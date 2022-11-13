@@ -32,30 +32,34 @@ final class LoginController {
 
     public function logIn(Request $request): JsonResponse {
         $content = json_decode($request->getContent());
-        $username = $request->request->get("username", $content->username);
-        $password = $request->request->get("password", $content->password);
+        $username = $content->username;
+        $password = $content->password;
 
         $user = $this->loginHandler->handle(
                 new Login($username, $password)
         );
 
+        $origin = $request->headers->get('Origin', "*");
+        $headers = [];
+        $headers["Access-Control-Allow-Origin"] = $origin;
+
         if (!$user) {
             $err = new stdClass();
             $err->message = ['Validation failed', "Unable to login"];
-            return new JsonResponse($err, 405);
+            return new JsonResponse($err, 405, $headers);
         }
 
         foreach ($user->getRecordedEvents() as $event) {
             if ($event instanceof UserWasLoggedIn) {
                 $out = new stdClass();
                 $out->user = $user; //->jsonSerialize();
-                return new JsonResponse($out);
+                return new JsonResponse($out, 200, $headers);
             }
         }
 
         $err = new stdClass();
         $err->message = ['Validation failed', "Unable to login"];
-        return new JsonResponse($err, 405);
+        return new JsonResponse($err, 405, $headers);
     }
 
     public function resetPassword(Request $request, array $param): JsonResponse {
@@ -198,8 +202,8 @@ final class LoginController {
 
     public function preFlight(Request $request): JsonResponse {
         $origin = $request->headers->get('Origin');
-        $headers = ["Access-Control-Allow-Origin"=> $origin,
-            "Access-Control-Allow-Methods"=> ["GET","PUT","POST","DELETE"],
+        $headers = ["Access-Control-Allow-Origin" => $origin,
+            "Access-Control-Allow-Methods" => ["GET", "PUT", "POST", "DELETE"],
             "Access-Control-Allow-Headers" => "Content-Type, user-token"
         ];
 
