@@ -73,10 +73,15 @@ final class SessionController {
         $userToken = $request->headers->get("user-token") ?? "";
         $user = $this->loginController->getUserByToken($userToken);
 
+        $origin = $request->headers->get('Origin', "*");
+        $headers = [];
+        $headers["Access-Control-Allow-Origin"] = $origin;
+
+
         if (!$user || $user->getToken() !== $userToken) {
             $err = new stdClass();
             $err->message = ['Validation failed', "No match for token $userToken"];
-            return new JsonResponse($err, 405);
+            return new JsonResponse($err, 405, $headers);
         }
 
         $validators = ["date" => SessionValidatorFactory::createSessionDateValidator()];
@@ -85,7 +90,7 @@ final class SessionController {
         if ($form->hasValidationErrors()) {
             $err = new stdClass();
             $err->message = $form->getValidationErrors();
-            return new JsonResponse($err, 400);
+            return new JsonResponse($err, 400, $headers);
         }
 
         try {
@@ -95,11 +100,11 @@ final class SessionController {
 
             $out = new stdClass();
             $out->session = $session;
-            return new JsonResponse($out);
+            return new JsonResponse($out,200, $headers);
         } catch (Exception $ex) {
             $err = new stdClass();
             $err->message = $ex->getMessage();
-            return new JsonResponse($err, 400);
+            return new JsonResponse($err, 400, $headers);
         }
     }
 

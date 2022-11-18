@@ -63,11 +63,16 @@ return [
     [
         'OPTIONS',
         '/checkToken/',
-        'trainingAPI\Login\LoginController#preFlight'
+        'trainingAPI\Preflight\PreflightController#preFlight'
     ],
     [
         'OPTIONS',
         '/login/',
-        'trainingAPI\Login\LoginController#preFlight'
+        'trainingAPI\Preflight\PreflightController#preFlight'
+    ],
+    [
+        'OPTIONS',
+        '/sessions/',
+        'trainingAPI\Preflight\PreflightController#preFlight'
     ],
 ];
