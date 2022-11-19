@@ -31,16 +31,21 @@ final class SessionController {
     public function getAllSessions(Request $request): JsonResponse {
         $userToken = $request->headers->get("user-token") ?? "";
         $user = $this->loginController->getUserByToken($userToken);
+
+        $origin = $request->headers->get('Origin', "*");
+        $headers = [];
+        $headers["Access-Control-Allow-Origin"] = $origin;
+        
         if (!$user || $user->getToken() !== $userToken) {
             $err = new stdClass();
             $err->message = ['Validation failed', "No match for token $userToken"];
-            return new JsonResponse($err, 405);
+            return new JsonResponse($err, 405, $headers);
         }
 
         $out = new stdClass();
         $out->sessions = $this->sessionRepository->getAllSessions($user->getId());
 
-        return new JsonResponse($out, 200);
+        return new JsonResponse($out, 200, $headers);
     }
 
     public function getSession(Request $request, array $param): JsonResponse {
@@ -48,10 +53,14 @@ final class SessionController {
         $user = $this->loginController->getUserByToken($userToken);
         $id = false;
 
+        $origin = $request->headers->get('Origin', "*");
+        $headers = [];
+        $headers["Access-Control-Allow-Origin"] = $origin;
+        
         if (!$user || $user->getToken() !== $userToken) {
             $err = new stdClass();
             $err->message = ['Validation failed', "No match for token $userToken"];
-            return new JsonResponse($err, 405);
+            return new JsonResponse($err, 405, $headers);
         }
 
         if (array_key_exists('id', $param)) {
@@ -60,13 +69,13 @@ final class SessionController {
         if ($id === false) {
             $err = new stdClass();
             $err->message = ['Validation failed', "Invalid id supplied"];
-            return new JsonResponse($err, 400);
+            return new JsonResponse($err, 400, $headers);
         }
 
         $out = new stdClass();
         $out->sessions = $this->sessionRepository->getSession($user->getId(), $id);
 
-        return new JsonResponse($out, 200);
+        return new JsonResponse($out, 200, $headers);
     }
 
     public function addSession(Request $request) {
@@ -76,7 +85,6 @@ final class SessionController {
         $origin = $request->headers->get('Origin', "*");
         $headers = [];
         $headers["Access-Control-Allow-Origin"] = $origin;
-
 
         if (!$user || $user->getToken() !== $userToken) {
             $err = new stdClass();
