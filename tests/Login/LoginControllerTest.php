@@ -37,13 +37,13 @@ final class LoginControllerTest extends TestCase {
 
     public function testLogIn() {
         $test = new LoginController($this->userRepository, $this->loginHandler, $this->emailExistsQuery);
-        $request = new Request([], ["username" => "kjell", "password" => "fel"]);
+        $request = new Request([],[],[],[],[],[],'{"username":"kjell@kejpa.com", "password" :  "fel"}');
         $this->assertEquals(405, $test->logIn($request)->getStatusCode());
 
-        $request = new Request([], ["username" => "kjell@kejpa.com", "password" => "fel"]);
+        $request = new Request([],[],[],[],[],[],'{"username":"kjell@kejpa.com", "password" : "fel"}');
         $this->assertEquals(405, $test->logIn($request)->getStatusCode());
 
-        $request = new Request([], ["username" => "kjell@kejpa.com", "password" => "pwd"]);
+        $request = new Request([],[],[],[],[],[],'{"username":"kjell@kejpa.com", "password" : "pwd"}');
         $this->assertEquals(200, $test->logIn($request)->getStatusCode());
     }
 

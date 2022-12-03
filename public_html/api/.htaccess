@@ -1,8 +1,0 @@
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{REQUEST_URI} !^(/|\.html)$[NC]
-    RewriteCond %{REQUEST_URI} !^\/tidapp\/index\.html$
-    RewriteCond %{REQUEST_URI} !^\/tidapp/$ 
-    RewriteCond %{REQUEST_URI} !(\.js|\.css|\.ico|\.png|\.jpg|\.jpeg|\.gif|\.json|.svg)$ [NC]
-    RewriteRule ^.*$ index.php
-</IfModule>
