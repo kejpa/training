@@ -38,7 +38,7 @@ final class UserFormTest extends TestCase {
         $this->assertEquals(-1, $user->getId());
         $this->assertEquals("first", $user->getFirstname());
         $this->assertEquals("last", $user->getLastname());
-        $this->assertEquals("password", $user->getPassword());
+        $this->assertTrue(password_verify("password", $user->getPassword()));
         $this->assertEquals(date("Y-m-d"), $user->getTokenDate()->format("Y-m-d"));
     }
 }

@@ -60,12 +60,14 @@ final class SessionControllerTest extends TestCase {
 
     public function testAddSession() {
         $test = new SessionController($this->loginController, $this->sessionRepository, $this->idExistsValidator);
-        $request = new Request([],[
-            "date" => date("Y-m-d", strtotime("yesterday")),
-            "length" => 1000,
-            "description" => "Liten text"
-        ]);
+        $request = new Request();
+        $request->initialize($request->query->all(), $request->request->all(),
+                $request->attributes->all(), [], [], $request->server->all(),
+            '{"date":"' . date("Y-m-d", strtotime("yesterday")) . '",' .
+            '"length":1000,"description": "Liten text"}');
+        
         $request->headers->add(["user-token" => "Abcd1234"]);
+        $request->setMethod("POST");
 
         $response = $test->addSession($request);
         $json = json_decode($response->getContent());
@@ -134,20 +136,22 @@ final class SessionControllerTest extends TestCase {
     public function testAddSessionValidationErrors() {
         $test = new SessionController($this->loginController, $this->sessionRepository, $this->idExistsValidator);
 // Bad date
-        $request = new Request([
-            "date" => "Bad date",
-            "length" => 1000,
-            "description" => "Liten text"
-        ]);
+        $request = new Request();
+        $request->initialize($request->query->all(), $request->request->all(),
+                $request->attributes->all(), [], [], $request->server->all(),
+                '{"date":"Bad date","length":1000, "description":"Liten text"}'
+        );
         $request->headers->add(["user-token" => "Abcd1234"]);
+        $request->setMethod("PUT");
+
         $response = $test->addSession($request);
         $this->assertEquals(400, $response->getStatusCode());
 // Date in future
-        $request = new Request([
-            "date" => date("Y-m-d", strtotime("tomorrow")),
-            "length" => 1000,
-            "description" => "Liten text"
-        ]);
+        $request = new Request();
+        $request->initialize($request->query->all(), $request->request->all(),
+                $request->attributes->all(), [], [], $request->server->all(),
+                '{"date":"' . date("Y-m-d", strtotime("tomorrow")) . '","length":1000, "description":"Liten text"}'
+        );
         $request->headers->add(["user-token" => "Abcd1234"]);
         $response = $test->addSession($request);
         $this->assertEquals(400, $response->getStatusCode());

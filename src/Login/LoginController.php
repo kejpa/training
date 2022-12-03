@@ -131,9 +131,8 @@ final class LoginController {
         $request->query->add($param);
         $userToken = $request->headers->get("user-token") ?? "";
         $user = $this->getUserByToken($userToken);
-        // OBS!!!! Ta bort när en "riktig" webbserver används!!!
-        // . i URL-parametrar fungerar inte i php:s inbyggda webbserver
-        $username = str_replace("*", ".", $request->query->get('user'));
+
+        $username = $request->query->get('user');
         $username = filter_var($username, FILTER_VALIDATE_EMAIL) . "";
 
         if (!$user || $user->getToken() !== $userToken || $user->getEmail() !== $username) {

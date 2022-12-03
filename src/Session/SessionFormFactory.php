@@ -15,9 +15,13 @@ final class SessionFormFactory {
 
     static public function createFromRequest(Request $request, array $validators): SessionForm {
         $content = json_decode($request->getContent());
+        $id = "";
+        if (isset($content->id)) {
+            $id = $content->id;
+        }
         return new SessionForm(
                 (string) $request->query->get('id', ''),
-                (string) $content->id ?? '',
+                (string) $id,
                 (string) $content->date ?? '',
                 (string) $content->length ?? '',
                 (string) $content->description ?? '',
