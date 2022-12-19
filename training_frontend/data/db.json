@@ -1,0 +1,36 @@
+{
+  "sessions": [
+    {
+      "id": 1,
+      "date": "2022-08-01",
+      "length": 1500,
+      "description": "lång text"
+    },
+    {
+      "id": 2,
+      "date": "2022-08-03",
+      "length": 2000,
+      "description": "längre text"
+    },
+    {
+      "length": "500",
+      "date": "2022-09-02",
+      "description": "Träning",
+      "id": 3
+    },
+    {
+      "stracka": "",
+      "date": "2022-09-03",
+      "description": "TEst test",
+      "length": "800",
+      "id": 4
+    },
+    {
+      "stracka": "",
+      "date": "2022-10-03",
+      "description": "",
+      "length": "1800",
+      "id": 5
+    }
+  ]
+}

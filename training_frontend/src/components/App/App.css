@@ -1,0 +1,28 @@
+.App {
+    height: 100%;
+}
+html,
+body,
+#root {
+    height: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    background-color: lightblue;
+    font-size: larger;
+}
+input,
+textarea,
+button {
+    font-size: larger;
+}
+.succe {
+    background-color: lightgreen;
+    color: darkgreen;
+}
+.error {
+    background-color: lightpink;
+    color: darkred;
+}
+.hidden {
+    display: none;
+}

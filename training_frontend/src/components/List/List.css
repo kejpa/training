@@ -1,0 +1,27 @@
+.wrapper {
+    display: "flex";
+    padding: 0 15px;
+}
+table {
+    border-collapse: collapse;
+    font-size: large;
+}
+tr:nth-child(odd) {
+    background-color: lightblue;
+}
+tr:nth-child(even) {
+    background-color: beige;
+}
+th {
+    background-color: cadetblue;
+    padding: 1px 5px;
+    border-bottom: 2px solid black;
+    color: beige;
+}
+td {
+    padding: 1px 5px;
+    vertical-align: top;
+}
+td:nth-child(2) {
+    text-align: right;
+}
