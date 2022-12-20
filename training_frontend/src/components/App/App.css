@@ -8,12 +8,12 @@ body,
     box-sizing: border-box;
     margin: 0;
     background-color: lightblue;
-    font-size: larger;
+    font-size: large;
 }
 input,
 textarea,
 button {
-    font-size: larger;
+    font-size: large;
 }
 .succe {
     background-color: lightgreen;
