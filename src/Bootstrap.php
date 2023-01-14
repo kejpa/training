@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Tracy\Debugger;
@@ -17,7 +18,7 @@ require ROOT_DIR . '/vendor/autoload.php';
 
 // Sätt igång debugging
 Debugger::enable();
-//Debugger::enable(Debugger::DEVELOPMENT);
+Debugger::enable(Debugger::DEVELOPMENT);
 // Skapa ett request-objekt med alla inskickade parametrar
 $request = Request::createFromGlobals();
 
@@ -42,7 +43,7 @@ $routeInfo = $dispatcher->dispatch(
 switch ($routeInfo[0]) {
     case Dispatcher::NOT_FOUND:
     case Dispatcher::METHOD_NOT_ALLOWED:
-        $content = file_get_contents(ROOT_DIR . "/src/info/info.html");
+        $content = file_get_contents(ROOT_DIR . "/src/Info/info.html");
         $response = new Response($content);
         break;
     case Dispatcher::FOUND:
@@ -53,10 +54,9 @@ switch ($routeInfo[0]) {
         $response = $controller->$method($request, $vars);
         break;
 }
-
 // Vi fick fel objekttyp i retur! Något gick fel!
 if (!$response instanceof Response) {
-    throw new Exception('Controller methods must return a Response object');
+    $response = new JsonResponse('Oväntat fel inträffade', 400);
 }
 
 // Förbered utdata

@@ -39,7 +39,7 @@ final class SessionController {
         if (!$user || $user->getToken() !== $userToken) {
             $err = new stdClass();
             $err->message = ['Validation failed', "No match for token $userToken"];
-            return new JsonResponse($err, 405, $headers);
+            return new JsonResponse($err, 401, $headers);
         }
 
         $out = new stdClass();
@@ -60,7 +60,7 @@ final class SessionController {
         if (!$user || $user->getToken() !== $userToken) {
             $err = new stdClass();
             $err->message = ['Validation failed', "No match for token $userToken"];
-            return new JsonResponse($err, 405, $headers);
+            return new JsonResponse($err, 401, $headers);
         }
 
         if (array_key_exists('id', $param)) {
@@ -89,7 +89,7 @@ final class SessionController {
         if (!$user || $user->getToken() !== $userToken) {
             $err = new stdClass();
             $err->message = ['Validation failed', "No match for token $userToken"];
-            return new JsonResponse($err, 405, $headers);
+            return new JsonResponse($err, 401, $headers);
         }
 
         $validators = ["date" => SessionValidatorFactory::createSessionDateValidator()];
@@ -124,7 +124,7 @@ final class SessionController {
         if (!$user || $user->getToken() !== $userToken) {
             $err = new stdClass();
             $err->message = ['Validation failed', "No match for token $userToken"];
-            return new JsonResponse($err, 405);
+            return new JsonResponse($err, 401);
         }
 
         if (array_key_exists('id', $param)) {
@@ -170,7 +170,7 @@ final class SessionController {
         if (!$user || $user->getToken() !== $userToken) {
             $err = new stdClass();
             $err->message = ['Validation failed', "No match for token $userToken"];
-            return new JsonResponse($err, 405);
+            return new JsonResponse($err, 401);
         }
 
         if (array_key_exists('id', $param)) {

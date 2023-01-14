@@ -46,7 +46,7 @@ final class LoginController {
         if (!$user) {
             $err = new stdClass();
             $err->message = ['Validation failed', "Unable to login"];
-            return new JsonResponse($err, 405, $headers);
+            return new JsonResponse($err, 401, $headers);
         }
 
         foreach ($user->getRecordedEvents() as $event) {
@@ -59,7 +59,7 @@ final class LoginController {
 
         $err = new stdClass();
         $err->message = ['Validation failed', "Unable to login"];
-        return new JsonResponse($err, 405, $headers);
+        return new JsonResponse($err, 401, $headers);
     }
 
     public function resetPassword(Request $request, array $param): JsonResponse {
@@ -88,9 +88,10 @@ final class LoginController {
     public function changePassword(Request $request, array $param): JsonResponse {
         $request->query->add($param);
         // OBS!!!! Ta bort när en "riktig" webbserver används!!!
-        // . i URL-parametrar fungerar inte i php:s inbyggda webbserver
-        $user = str_replace("*", ".", $request->query->get('user'));
-        $username = filter_var($user, FILTER_VALIDATE_EMAIL) . "";
+        // . i URL-parametrar fungerar inte @ i php:s inbyggda webbserver
+        //$user = str_replace("*", ".", $request->query->get('user'));
+        //$username = filter_var($user, FILTER_VALIDATE_EMAIL) . "";
+        $username = filter_input(INPUT_POST,'user', FILTER_VALIDATE_EMAIL) . "";
 
         $user = $this->loginHandler->handle(new Login($username, ""));
         $resetToken = $request->request->get("resetToken");
@@ -114,7 +115,7 @@ final class LoginController {
         if (!$passwordValidator->validate($password)) {
             $err = new stdClass();
             $err->message = array_merge(['Validation failed'], $passwordValidator->getErrors());
-            return new JsonResponse($err, 403);
+            return new JsonResponse($err, 400);
         }
 
         $user->changePassword($password);
@@ -138,7 +139,7 @@ final class LoginController {
         if (!$user || $user->getToken() !== $userToken || $user->getEmail() !== $username) {
             $err = new stdClass();
             $err->message = ['Validation failed', "No match for token $userToken"];
-            return new JsonResponse($err, 405);
+            return new JsonResponse($err, 400);
         }
 
         $password = $request->request->get("password");
@@ -146,7 +147,7 @@ final class LoginController {
         if (!$passwordValidator->validate($password)) {
             $err = new stdClass();
             $err->message = array_merge(['Validation failed'], $passwordValidator->getErrors());
-            return new JsonResponse($err, 403);
+            return new JsonResponse($err, 400);
         }
 
         $user->changePassword($password);
@@ -169,7 +170,7 @@ final class LoginController {
         if ($user === null) {
             $err = new stdClass();
             $err->message = ['Invalid token'];
-            return new JsonResponse($err, 405, $headers);
+            return new JsonResponse($err, 401, $headers);
         }
 
         $out = new stdClass();
