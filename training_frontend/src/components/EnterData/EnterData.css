@@ -1,5 +1,6 @@
 form {
-    margin: .3em;
+    margin: 0.3em;
+    height: 100%;
 }
 label {
     display: block;
@@ -12,10 +13,10 @@ input[type="text"] {
 }
 textarea {
     min-height: 5em;
-    height: fit-content;
-    width:95%;
+    height: 20em;
+    width: 95%;
 }
 button {
-    margin-top: .5em;
-    padding: .2em;
+    margin-top: 0.5em;
+    padding: 0.2em;
 }

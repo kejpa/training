@@ -25,3 +25,6 @@ td {
 td:nth-child(2) {
     text-align: right;
 }
+.description {
+    white-space: pre-line;
+}

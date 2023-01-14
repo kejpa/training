@@ -47,14 +47,7 @@ export default function List() {
                         <tr key={item.id}>
                             <td>{item.date}</td>
                             <td>{item.length}</td>
-                            <td
-                                dangerouslySetInnerHTML={{
-                                    __html: item.description.replace(
-                                        "\n",
-                                        "<br />"
-                                    ),
-                                }}
-                            />
+                            <td className="description">{item.description}</td>
                         </tr>
                     ))}
                 </tbody>

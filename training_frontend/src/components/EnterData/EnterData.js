@@ -91,7 +91,7 @@ export default function EnterData() {
                     size="5"
                     value={formData.length}
                     onChange={handleChange}
-                />
+                />Sträcka:{" "}
                 m
             </label>
             <label>Beskrivning</label>

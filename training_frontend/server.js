@@ -35,7 +35,7 @@ app.use("/checkToken/", (req, res) => {
         }, 1500);
     } else {
         setTimeout(() => {
-            res.status(405).send({
+            res.status(401).send({
                 message: ["Bad token", "User credientials not validated"],
             });
         }, 1500);
