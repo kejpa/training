@@ -32,8 +32,8 @@ final class LoginController {
 
     public function logIn(Request $request): JsonResponse {
         $content = json_decode($request->getContent());
-        $username = $content->username;
-        $password = $content->password;
+        $username = $content->username ?? '';
+        $password = $content->password ?? '';
 
         $user = $this->loginHandler->handle(
                 new Login($username, $password)

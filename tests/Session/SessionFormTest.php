@@ -31,8 +31,7 @@ final class SessionFormTest extends TestCase {
         $stub->method("getErrors")->willReturn(["Testing", "testing"]);
 
         $validators["date"] = $stub;
-        $test = new SessionForm("","", "2022-02-02", "1000", "Testing testing", $validators);
-
+        $test = new SessionForm("","", "2022-02-02", "1000", "Testing testing",3, $validators, 1);
         $this->assertEquals(false, $test->hasValidationErrors());
         $this->assertEquals(2, count($test->getValidationErrors()));
     }
@@ -43,17 +42,17 @@ final class SessionFormTest extends TestCase {
         $stub->method('validate')->willReturn(false);
         $stub->method("getErrors")->willReturn([]);
         $validators["date"] = $stub;
-        $test = new SessionForm("","", "2022-02-02", "1000", "Testing testing", $validators);
+        $test = new SessionForm("","", "2022-02-02", "1000", "Testing testing",3, $validators);
         $this->assertEquals(true, $test->hasValidationErrors());
         $this->assertEquals(0, count($test->getValidationErrors()));
     }
 
     public function testToCommand() {
         $validators = [];
-        $test = new SessionForm("","", "2022-02-02", "1000", "Testing testing", $validators);
+        $test = new SessionForm("","", "2022-02-02", "1000", "Testing testing",3, $validators);
         $this->assertEquals(-1, $test->toCommand(1)->getId());
 
-        $test = new SessionForm("","5", "2022-02-02", "1000", "Testing testing", $validators);
+        $test = new SessionForm("","5", "2022-02-02", "1000", "Testing testing",3, $validators);
         $this->assertEquals(5, $test->toCommand(1)->getId());
     }
 

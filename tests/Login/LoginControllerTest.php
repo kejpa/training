@@ -38,10 +38,10 @@ final class LoginControllerTest extends TestCase {
     public function testLogIn() {
         $test = new LoginController($this->userRepository, $this->loginHandler, $this->emailExistsQuery);
         $request = new Request([],[],[],[],[],[],'{"username":"kjell@kejpa.com", "password" :  "fel"}');
-        $this->assertEquals(405, $test->logIn($request)->getStatusCode());
+        $this->assertEquals(401, $test->logIn($request)->getStatusCode());
 
         $request = new Request([],[],[],[],[],[],'{"username":"kjell@kejpa.com", "password" : "fel"}');
-        $this->assertEquals(405, $test->logIn($request)->getStatusCode());
+        $this->assertEquals(401, $test->logIn($request)->getStatusCode());
 
         $request = new Request([],[],[],[],[],[],'{"username":"kjell@kejpa.com", "password" : "pwd"}');
         $this->assertEquals(200, $test->logIn($request)->getStatusCode());
@@ -85,7 +85,7 @@ final class LoginControllerTest extends TestCase {
         $user->forgot();
 
         $request = new Request([], ["resetToken" => $user->getResetToken(), "password" => "pwd"]);
-        $this->assertEquals(403, $test->changePassword($request, ["user" => "kjell@kejpa.com"])->getStatusCode(), "för kort lösen");
+        $this->assertEquals(400, $test->changePassword($request, ["user" => "kjell@kejpa.com"])->getStatusCode(), "för kort lösen");
 
         $request = new Request([], ["resetToken" => $user->getResetToken(), "password" => "password is long enough"]);
         $this->assertEquals(200, $test->changePassword($request, ["user" => "kjell@kejpa.com"])->getStatusCode(), "OK");
@@ -96,19 +96,19 @@ final class LoginControllerTest extends TestCase {
 
         $request = new Request([], ["password" => "Password is long enought"]);
         $request->headers->add(["user-token" => "Abcd1234"]);
-        $this->assertEquals(405, $test->updatePassword($request, ["user" => "kjell"])->getStatusCode(), "Bad user");
+        $this->assertEquals(400, $test->updatePassword($request, ["user" => "kjell"])->getStatusCode(), "Bad user");
 
         $request = new Request([], ["password" => "Password is long enought"]);
         $request->headers->add(["user-token" => "Fel"]);
-        $this->assertEquals(405, $test->updatePassword($request, [])->getStatusCode(), "Bad user-token");
+        $this->assertEquals(400, $test->updatePassword($request, [])->getStatusCode(), "Bad user-token");
 
         $request = new Request([], ["password" => "Password is long enought"]);
         $request->headers->add(["user-token" => "Abcd1234"]);
-        $this->assertEquals(405, $test->updatePassword($request, ["user" => "kjell.hansen@kejpa.com"])->getStatusCode(), "None-matching email");
+        $this->assertEquals(400, $test->updatePassword($request, ["user" => "kjell.hansen@kejpa.com"])->getStatusCode(), "None-matching email");
 
         $request = new Request([], ["password" => "pwd"]);
         $request->headers->add(["user-token" => "Abcd1234"]);
-        $this->assertEquals(403, $test->updatePassword($request, ["user" => "kjell@kejpa.com"])->getStatusCode(), "Too short password");
+        $this->assertEquals(400, $test->updatePassword($request, ["user" => "kjell@kejpa.com"])->getStatusCode(), "Too short password");
 
         $request = new Request([], ["password" => "Password is long enough"]);
         $request->headers->add(["user-token" => "Abcd1234"]);
@@ -120,7 +120,7 @@ final class LoginControllerTest extends TestCase {
 
         $request = new Request();
         $request->headers->add(["user-token" => "Fel"]);
-        $this->assertEquals(405, $test->checkToken($request)->getStatusCode());
+        $this->assertEquals(401, $test->checkToken($request)->getStatusCode());
 
         $request->headers->add(["user-token" => "Abcd1234"]);
         $this->assertEquals(200, $test->checkToken($request)->getStatusCode());

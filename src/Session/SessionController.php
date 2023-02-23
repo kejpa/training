@@ -18,14 +18,7 @@ use trainingAPI\Login\LoginController;
  */
 final class SessionController {
 
-    private $loginController;
-    private $sessionRepository;
-    private $idExistsValidator;
-
-    public function __construct(LoginController $loginController, SessionRepository $sessionRepository, IdExistsValidator $idExistsValidator) {
-        $this->loginController = $loginController;
-        $this->sessionRepository = $sessionRepository;
-        $this->idExistsValidator = $idExistsValidator;
+    public function __construct(private LoginController $loginController,private SessionRepository $sessionRepository,private IdExistsValidator $idExistsValidator) {
     }
 
     public function getAllSessions(Request $request): JsonResponse {

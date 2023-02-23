@@ -15,23 +15,14 @@ use stdClass;
  */
 final class Session implements JsonSerializable {
 
-    private $id;
-    private $userid;
-    private $length;
-    private $date;
-    private $description;
-
-    public function __construct(int $id, int $userid, int $length, DateTimeImmutable $date, string $description) {
-        $this->id = $id;
-        $this->userid = $userid;
-        $this->length = $length;
-        $this->date = $date;
-        $this->description = $description;
+    public function __construct(private int $id, private int $userid, private int $length, private DateTimeImmutable $date, 
+            private string $description, private ?int $rpe=null) {
+        
     }
 
     public static function createFromRow(array $row): ?Session {
         return new Session((int) $row["id"], (int) $row["userid"], (int) $row["length"],
-                new DateTimeImmutable($row["date"]), $row["description"]);
+                new DateTimeImmutable($row["date"]), $row["description"], $row["rpe"]);
     }
 
     public function getId(): int {
@@ -74,13 +65,22 @@ final class Session implements JsonSerializable {
         $this->description = $description;
     }
 
-    public function jsonSerialize(): stdClass{
+    public function getRpe(): int {
+        return $this->rpe;
+    }
+
+    public function setRpe(int $rpe): void {
+        $this->rpe = $rpe;
+    }
+
+    public function jsonSerialize(): stdClass {
         $me = new stdClass();
         $me->id = $this->id;
         $me->userid = $this->userid;
         $me->length = $this->length;
         $me->date = $this->date->format("Y-m-d");
         $me->description = $this->description;
+        $me->rpe = $this->rpe;
 
         return $me;
     }

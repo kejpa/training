@@ -25,6 +25,7 @@ final class DbalSessionRepository implements SessionRepository {
                 ->addSelect("userid")
                 ->addSelect("length")
                 ->addSelect("date")
+                ->addSelect("rpe")
                 ->addSelect("description");
         $qb->from("sessions");
         $qb->where('userid=' . $qb->createNamedParameter($userid));
@@ -46,6 +47,7 @@ final class DbalSessionRepository implements SessionRepository {
                 ->addSelect("userid")
                 ->addSelect("length")
                 ->addSelect("date")
+                ->addSelect("rpe")
                 ->addSelect("description");
         $qb->from("sessions");
         $qb->where('userid=' . $qb->createNamedParameter($userid))
@@ -69,6 +71,7 @@ final class DbalSessionRepository implements SessionRepository {
             "date" => $qb->createNamedParameter($session->getDate()->format("Y-m-d")),
             "description" => $qb->createNamedParameter($session->getDescription()),
             "userid" => $qb->createNamedParameter($session->getUserid()),
+            "rpe" => $qb->createNamedParameter($session->getRpe()),
         ]);
 
         $stmt = $qb->execute();
@@ -89,7 +92,8 @@ final class DbalSessionRepository implements SessionRepository {
         $qb->update('sessions');
         $qb->set('length', $qb->createNamedParameter($session->getLength()))
                 ->set('date', $qb->createNamedParameter($session->getDate()->format("Y-m-d")))
-                ->set('description', $qb->createNamedParameter($session->getDescription()));
+                ->set('description', $qb->createNamedParameter($session->getDescription()))
+                ->set('rpe', $qb->createNamedParameter($session->getRpe()));
         $qb->where('id=' . $qb->createNamedParameter($session->getId()))
                 ->andWhere('userid =' . $qb->createNamedParameter($session->getUserid()));
 

@@ -16,29 +16,32 @@ use trainingAPI\Session\Session;
 final class SessionTest extends TestCase {
 
     public function testProperties() {
-        $test = new Session(1, 2, 1000, new DateTimeImmutable("2022-02-02"), "description");
+        $test = new Session(1, 2, 1000, new DateTimeImmutable("2022-02-02"), "description", 1);
 
         $this->assertEquals(1, $test->getId());
         $this->assertEquals(2, $test->getUserid());
         $this->assertEquals(1000, $test->getLength());
         $this->assertEquals("2022-02-02", $test->getDate()->format("Y-m-d"));
         $this->assertEquals("description", $test->getDescription());
+        $this->assertEquals("1", $test->getRpe());
 
         $test->setId(2);
         $test->setUserid(3);
         $test->setLength(500);
         $test->setDate(new DateTimeImmutable("2022-03-03"));
         $test->setDescription("Testing testing");
+        $test->setRpe(7);
 
         $this->assertEquals(2, $test->getId());
         $this->assertEquals(3, $test->getUserid());
         $this->assertEquals(500, $test->getLength());
         $this->assertEquals("2022-03-03", $test->getDate()->format("Y-m-d"));
         $this->assertEquals("Testing testing", $test->getDescription());
+        $this->assertEquals("7", $test->getRpe());
     }
 
     public function testCreateFromRow() {
-        $row = ['id' => 1, "userid" => 2, "date" => "2022-02-02", "length" => 1000, "description" => "Testing testing"];
+        $row = ['id' => 1, "userid" => 2, "date" => "2022-02-02", "length" => 1000, "description" => "Testing testing", "rpe"=>3];
         $test = Session::createFromRow($row);
 
         $this->assertEquals(1, $test->getId());
@@ -46,6 +49,7 @@ final class SessionTest extends TestCase {
         $this->assertEquals(1000, $test->getLength());
         $this->assertEquals("2022-02-02", $test->getDate()->format("Y-m-d"));
         $this->assertEquals("Testing testing", $test->getDescription());
+        $this->assertEquals(3, $test->getRpe());
     }
 
 }

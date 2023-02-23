@@ -64,7 +64,7 @@ final class SessionControllerTest extends TestCase {
         $request->initialize($request->query->all(), $request->request->all(),
                 $request->attributes->all(), [], [], $request->server->all(),
             '{"date":"' . date("Y-m-d", strtotime("yesterday")) . '",' .
-            '"length":1000,"description": "Liten text"}');
+            '"length":1000,"description": "Liten text", "rpe":"3"}');
         
         $request->headers->add(["user-token" => "Abcd1234"]);
         $request->setMethod("POST");
@@ -80,7 +80,7 @@ final class SessionControllerTest extends TestCase {
         $request->initialize($request->query->all(), $request->request->all(),
                 $request->attributes->all(), [], [], $request->server->all(),
                 '{"id":1,"date":"' . date("Y-m-d", strtotime("yesterday")) . '"'
-                . ',"length":1000, "description":"Liten text"}'
+                . ',"length":1000, "description":"Liten text", "rpe":"3"}'
         );
         $request->headers->add(["user-token" => "Abcd1234"]);
         $request->setMethod("PUT");
@@ -139,7 +139,7 @@ final class SessionControllerTest extends TestCase {
         $request = new Request();
         $request->initialize($request->query->all(), $request->request->all(),
                 $request->attributes->all(), [], [], $request->server->all(),
-                '{"date":"Bad date","length":1000, "description":"Liten text"}'
+                '{"date":"Bad date","length":1000, "description":"Liten text", "rpe":"3"}'
         );
         $request->headers->add(["user-token" => "Abcd1234"]);
         $request->setMethod("PUT");
@@ -163,7 +163,7 @@ final class SessionControllerTest extends TestCase {
         $request = new Request( ["id" => 1]);
         $request->initialize($request->query->all(), $request->request->all(),
                 $request->attributes->all(), [], [], $request->server->all(),
-                '{"id":1,"date":"Bad date","length":1000, "description":"Liten text"}'
+                '{"id":1,"date":"Bad date","length":1000, "description":"Liten text", "rpe":"3"}'
         );
         $request->headers->add(["user-token" => "Abcd1234"]);
         $request->setMethod("PUT");
@@ -174,7 +174,7 @@ final class SessionControllerTest extends TestCase {
         $request = new Request( ["id" => 1]);
         $request->initialize($request->query->all(), $request->request->all(),
                 $request->attributes->all(), [], [], $request->server->all(),
-                '{"id":1,"date":"' . date("Y-m-d", strtotime("tomorrow")) . '","length":1000, "description":"Liten text"}'
+                '{"id":1,"date":"' . date("Y-m-d", strtotime("tomorrow")) . '","length":1000, "description":"Liten text", "rpe":"3"}'
         );
         $request->headers->add(["user-token" => "Abcd1234"]);
         $request->setMethod("PUT");
@@ -185,7 +185,7 @@ final class SessionControllerTest extends TestCase {
         $request = new Request( ["id" => 1]);
         $request->initialize($request->query->all(), $request->request->all(),
                 $request->attributes->all(), [], [], $request->server->all(),
-                '{"id":1,"date":"' . date("Y-m-d", strtotime("yesterday")) . '","length":1000, "description":"Liten text"}'
+                '{"id":1,"date":"' . date("Y-m-d", strtotime("yesterday")) . '","length":1000, "description":"Liten text", "rpe":"3"}'
         );
         $request->headers->add(["user-token" => "Abcd1234"]);
         $request->setMethod("PUT");
@@ -196,7 +196,7 @@ final class SessionControllerTest extends TestCase {
         $request = new Request(["id" => 2]);
         $request->initialize($request->query->all(), $request->request->all(),
                 $request->attributes->all(), [], [], $request->server->all(),
-                '{"id":2,"date":"' . date("Y-m-d", strtotime("yesterday")) . '","length":1000, "description":"Liten text"}'
+                '{"id":2,"date":"' . date("Y-m-d", strtotime("yesterday")) . '","length":1000, "description":"Liten text","rpe":"3"}'
         );
         $request->headers->add(["user-token" => "Abcd1234"]);
         $request->setMethod("PUT");
