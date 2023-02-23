@@ -10,6 +10,7 @@ const formReducer = (state, data) => {
             length: "",
             date: Moment().format("YYYY-MM-DD"),
             description: "",
+            rpe:""
         };
     }
     if (data.name === "length") {
@@ -26,6 +27,7 @@ export default function EnterData() {
         length: "",
         date: Moment().format("YYYY-MM-DD"),
         description: "",
+        rpe:""
     });
     const handleChange = (event) => {
         setFormData({
@@ -37,9 +39,6 @@ export default function EnterData() {
     function handleSubmit(event) {
         event.preventDefault();
         if (formData.id === undefined && parseInt(formData.stracka) === 0) {
-            console.log("No Submitting empty form");
-            console.log(formData.id);
-            console.log(formData.stracka);
             return false;
         }
         setSubmitting(true);
@@ -91,7 +90,7 @@ export default function EnterData() {
                     size="5"
                     value={formData.length}
                     onChange={handleChange}
-                />Sträcka:{" "}
+                />{" "}
                 m
             </label>
             <label>Beskrivning</label>
@@ -101,6 +100,44 @@ export default function EnterData() {
                 value={formData.description}
             />
             <br />
+            <label>
+                Rpe:{" "}
+                <select name="rpe" value={formData.rpe} onChange={handleChange}>
+                    <option value={""} className="rpe">
+                        Inget
+                    </option>
+                    <option value={1} className="rpe1">
+                        1
+                    </option>
+                    <option value={2} className="rpe2">
+                        2
+                    </option>
+                    <option value={3} className="rpe3">
+                        3
+                    </option>
+                    <option value={4} className="rpe4">
+                        4
+                    </option>
+                    <option value={5} className="rpe5">
+                        5
+                    </option>
+                    <option value={6} className="rpe6">
+                        6
+                    </option>
+                    <option value={7} className="rpe7">
+                        7
+                    </option>
+                    <option value={8} className="rpe8">
+                        8
+                    </option>
+                    <option value={9} className="rpe9">
+                        9
+                    </option>
+                    <option value={10} className="rpe10">
+                        10
+                    </option>
+                </select>
+            </label>
             <input type="hidden" name="id" value={formData.id} />
             <button type="submit" disabled={submitting}>
                 Spara

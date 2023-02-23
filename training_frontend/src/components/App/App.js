@@ -115,7 +115,7 @@ async function checkToken(userCredentials) {
 
 export function globalUrl() {
     if (window.document.location.port === "3000") {
-        return "http://localhost:8081";
+        return "http://api.localhost";
     } else {
         let locationArray = window.document.location.hostname.split(".");
         locationArray.shift();

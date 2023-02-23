@@ -12,7 +12,7 @@ body,
 }
 input,
 textarea,
-button {
+button, select {
     font-size: large;
 }
 .succe {
@@ -25,4 +25,32 @@ button {
 }
 .hidden {
     display: none;
+}
+option {
+    padding-left: 20%;
+}
+.rpe {
+    background-color: aqua;
+}
+.rpe1, .rpe2 {
+    background-color: lightgreen;
+    text-align: right;
+}
+.rpe3,.rpe4 {
+    background-color: green;
+    text-align: right;
+}
+.rpe5,.rpe6 {
+    background-color: orange;
+    text-align: right;
+}
+.rpe7, .rpe8 {
+    background-color: red;
+    color: bisque;
+    text-align: right;
+}
+.rpe9, .rpe10 {
+    background-color: darkred;
+    color: bisque;
+    text-align: right;
 }

@@ -14,12 +14,13 @@ export default function List() {
         let mounted = true;
         getSessions(user)
             .then(async (response) => {
-                if(response.ok) {
-                if (mounted) {
-                    let s = await response.json();
-                    setSessions(s.sessions);
-                }} else {
-                    let err=await response.json();
+                if (response.ok) {
+                    if (mounted) {
+                        let s = await response.json();
+                        setSessions(s.sessions);
+                    }
+                } else {
+                    let err = await response.json();
                     setStatus(err.join("<br />"));
                 }
             })
@@ -40,6 +41,7 @@ export default function List() {
                         <th>Datum</th>
                         <th>Sträcka</th>
                         <th>Beskrivning</th>
+                        <th>rpe</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,6 +50,7 @@ export default function List() {
                             <td>{item.date}</td>
                             <td>{item.length}</td>
                             <td className="description">{item.description}</td>
+                            <td className={"rpe" + item.rpe}>{item.rpe}</td>
                         </tr>
                     ))}
                 </tbody>
