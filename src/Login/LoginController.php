@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use trainingAPI\Exceptions\ValidationException;
 
 /**
  * Description of LoginController
@@ -16,18 +17,21 @@ use Symfony\Component\HttpFoundation\Request;
  */
 final class LoginController {
 
-    private $userRepository;
-    private $loginHandler;
-    private $emailExistsQuery;
-
-    public function __construct(UserRepository $userRepository, LoginHandler $loginHandler, EmailExistsQuery $emailExistsQuery) {
-        $this->userRepository = $userRepository;
-        $this->loginHandler = $loginHandler;
-        $this->emailExistsQuery = $emailExistsQuery;
+    public function __construct(private Request $request, private UserRepository $userRepository, private LoginHandler $loginHandler,
+            private EmailExistsQuery $emailExistsQuery) {
+        
     }
 
-    public function getUserByToken(string $token): ?User {
-        return $this->userRepository->getUserByToken($token);
+    public function getUserByToken(string $token = null): ?User {
+        $userToken =$token ?? $this->request->headers->get("user-token") ??"";
+
+        $user = $this->userRepository->getUserByToken($userToken);
+        if (!$user || $user->getToken() !== $userToken) {
+            $messages = ['Validation failed', "No match for token $userToken"];
+            throw ValidationException::withMessages($messages);
+        }
+        
+        return $user;
     }
 
     public function logIn(Request $request): JsonResponse {
@@ -91,7 +95,7 @@ final class LoginController {
         // . i URL-parametrar fungerar inte @ i php:s inbyggda webbserver
         //$user = str_replace("*", ".", $request->query->get('user'));
         //$username = filter_var($user, FILTER_VALIDATE_EMAIL) . "";
-        $username = filter_input(INPUT_POST,'user', FILTER_VALIDATE_EMAIL) . "";
+        $username = filter_input(INPUT_POST, 'user', FILTER_VALIDATE_EMAIL) . "";
 
         $user = $this->loginHandler->handle(new Login($username, ""));
         $resetToken = $request->request->get("resetToken");
@@ -199,6 +203,4 @@ final class LoginController {
 
         return new JsonResponse($out);
     }
-
-
 }

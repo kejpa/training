@@ -13,7 +13,7 @@ final class PreflightController {
         $origin = $request->headers->get('Origin');
         $headers = ["Access-Control-Allow-Origin" => $origin,
             "Access-Control-Allow-Methods" => ["GET", "PUT", "POST", "DELETE"],
-            "Access-Control-Allow-Headers" => "Content-Type, user-token"
+            "Access-Control-Allow-Headers" => "Content-Type, Bearer"
         ];
 
         return new JsonResponse(null, 200, $headers);

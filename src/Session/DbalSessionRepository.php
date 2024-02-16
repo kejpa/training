@@ -29,10 +29,11 @@ final class DbalSessionRepository implements SessionRepository {
                 ->addSelect("description");
         $qb->from("sessions");
         $qb->where('userid=' . $qb->createNamedParameter($userid));
-        $qb->orderBy("date","DESC");
+        $qb->andWhere("id<8");
+        $qb->orderBy("date","ASC");
 
-        $stmt = $qb->execute();
-        $rows = $stmt->fetchAll();
+        $stmt = $qb->executeQuery();
+        $rows = $stmt->fetchAllAssociative();
         $sessions = [];
         foreach ($rows as $row) {
             $sessions[] = Session::createFromRow($row);
@@ -74,7 +75,7 @@ final class DbalSessionRepository implements SessionRepository {
             "rpe" => $qb->createNamedParameter($session->getRpe()),
         ]);
 
-        $stmt = $qb->execute();
+        $qb->executeStatement();
         return (int) $this->connection->lastInsertId();
     }
 

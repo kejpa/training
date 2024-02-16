@@ -27,9 +27,9 @@ final class DbalSessionIdExists implements SessionIdExists {
         $qb->where("id = {$qb->createNamedParameter($id)}")
                 ->andWhere("userid = {$qb->createNamedParameter($userId)}");
 
-        $stmt = $qb->execute();
+        $antal = $qb->executeStatement();
 
-        return (bool) $stmt->rowCount();
+        return (bool) $antal;
     }
 
 }

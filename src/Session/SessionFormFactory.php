@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 final class SessionFormFactory {
 
-    static public function createFromRequest(Request $request, array $validators): SessionForm {
+    static public function createFromContent(Request $request, array $validators): SessionForm {
         $content = json_decode($request->getContent());
         $id = "";
         $rpe=null;

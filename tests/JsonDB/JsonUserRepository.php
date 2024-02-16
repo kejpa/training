@@ -68,5 +68,4 @@ final class JsonUserRepository implements UserRepository {
 
         return $max;
     }
-
 }

@@ -16,7 +16,7 @@ return [
     ],
     [
         'POST',
-        '/sessions/',
+        '/sessions',
         'trainingAPI\Session\SessionController#addSession'
     ],
     [
@@ -72,7 +72,7 @@ return [
     ],
     [
         'OPTIONS',
-        '/sessions/',
+        '/sessions[/{id:\d+}]',
         'trainingAPI\Preflight\PreflightController#preFlight'
     ],
 ];

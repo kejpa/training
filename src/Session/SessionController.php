@@ -8,8 +8,9 @@ use Exception;
 use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use trainingAPI\Exceptions\ValidationException;
 use trainingAPI\Framework\ChainOfResponse\Validator\IdExistsValidator;
-use trainingAPI\Login\LoginController;
+use trainingAPI\Login\Authenticator;
 
 /**
  * Description of SessionController
@@ -18,146 +19,85 @@ use trainingAPI\Login\LoginController;
  */
 final class SessionController {
 
-    public function __construct(private LoginController $loginController,private SessionRepository $sessionRepository,private IdExistsValidator $idExistsValidator) {
+    public function __construct(private Authenticator $authenticator, private SessionRepository $sessionRepository, private IdExistsValidator $idExistsValidator) {
+        
     }
 
-    public function getAllSessions(Request $request): JsonResponse {
-        $userToken = $request->headers->get("user-token") ?? "";
-        $user = $this->loginController->getUserByToken($userToken);
-
-        $origin = $request->headers->get('Origin', "*");
-        $headers = [];
-        $headers["Access-Control-Allow-Origin"] = $origin;
-        
-        if (!$user || $user->getToken() !== $userToken) {
-            $err = new stdClass();
-            $err->message = ['Validation failed', "No match for token $userToken"];
-            return new JsonResponse($err, 401, $headers);
-        }
+    public function getAllSessions(): JsonResponse {
+        $user = $this->authenticator->authenticate();
 
         $out = new stdClass();
         $out->sessions = $this->sessionRepository->getAllSessions($user->getId());
 
-        return new JsonResponse($out, 200, $headers);
+        return (new JsonResponse($out, 200))->setEncodingOptions(15 + JSON_UNESCAPED_UNICODE);
     }
 
     public function getSession(Request $request, array $param): JsonResponse {
-        $userToken = $request->headers->get("user-token") ?? "";
-        $user = $this->loginController->getUserByToken($userToken);
+        $user = $this->authenticator->authenticate();
         $id = false;
-
-        $origin = $request->headers->get('Origin', "*");
-        $headers = [];
-        $headers["Access-Control-Allow-Origin"] = $origin;
-        
-        if (!$user || $user->getToken() !== $userToken) {
-            $err = new stdClass();
-            $err->message = ['Validation failed', "No match for token $userToken"];
-            return new JsonResponse($err, 401, $headers);
-        }
 
         if (array_key_exists('id', $param)) {
             $id = filter_var($param['id'], FILTER_VALIDATE_INT);
         }
         if ($id === false) {
-            $err = new stdClass();
-            $err->message = ['Validation failed', "Invalid id supplied"];
-            return new JsonResponse($err, 400, $headers);
+            $messages = ['Validation failed', "Invalid id supplied"];
+            throw ValidationException::withMessages($messages);
         }
 
         $out = new stdClass();
         $out->sessions = $this->sessionRepository->getSession($user->getId(), $id);
 
-        return new JsonResponse($out, 200, $headers);
+        return new JsonResponse($out, 200);
     }
 
     public function addSession(Request $request) {
-        $userToken = $request->headers->get("user-token") ?? "";
-        $user = $this->loginController->getUserByToken($userToken);
-
-        $origin = $request->headers->get('Origin', "*");
-        $headers = [];
-        $headers["Access-Control-Allow-Origin"] = $origin;
-
-        if (!$user || $user->getToken() !== $userToken) {
-            $err = new stdClass();
-            $err->message = ['Validation failed', "No match for token $userToken"];
-            return new JsonResponse($err, 401, $headers);
-        }
+        $user = $this->authenticator->authenticate();
 
         $validators = ["date" => SessionValidatorFactory::createSessionDateValidator()];
-        $form = SessionFormFactory::createFromRequest($request, $validators);
+        $form = SessionFormFactory::createFromContent($request, $validators);
 
-        if ($form->hasValidationErrors()) {
-            $err = new stdClass();
-            $err->message = $form->getValidationErrors();
-            return new JsonResponse($err, 400, $headers);
-        }
+        $session = $form->toCommand($user->getId());
+        $id = $this->sessionRepository->addSession($user->getId(), $session);
+        $session->setId($id);
 
-        try {
-            $session = $form->toCommand($user->getId());
-            $id = $this->sessionRepository->addSession($user->getId(), $session);
-            $session->setId($id);
-
-            $out = new stdClass();
-            $out->session = $session;
-            return new JsonResponse($out,200, $headers);
-        } catch (Exception $ex) {
-            $err = new stdClass();
-            $err->message = $ex->getMessage();
-            return new JsonResponse($err, 400, $headers);
-        }
+        $out = new stdClass();
+        $out->session = $session;
+        return new JsonResponse($out, 200);
     }
 
     public function updateSession(Request $request, array $param) {
-        $userToken = $request->headers->get("user-token") ?? "";
-        $user = $this->loginController->getUserByToken($userToken);
+        $user = $this->authenticator->authenticate();
         $id = false;
-
-        if (!$user || $user->getToken() !== $userToken) {
-            $err = new stdClass();
-            $err->message = ['Validation failed', "No match for token $userToken"];
-            return new JsonResponse($err, 401);
-        }
 
         if (array_key_exists('id', $param)) {
             $id = filter_var($param['id'], FILTER_VALIDATE_INT);
         }
         if ($id === false) {
-            $err = new stdClass();
-            $err->message = ['Validation failed', "Invalid id supplied"];
-            return new JsonResponse($err, 400);
+            $messages = ['Validation failed', "Invalid id supplied"];
+            throw ValidationException::withMessages($messages);
         }
+
         $request->query->add($param);
 
         $validators = ["date" => SessionValidatorFactory::createSessionDateValidator()];
         $validators["id"] = SessionValidatorFactory::createSessionIdValidator($user->getId(), $this->idExistsValidator);
-        $form = SessionFormFactory::createFromRequest($request, $validators);
+        $form = SessionFormFactory::createFromContent($request, $validators);
 
-        if ($form->hasValidationErrors()) {
-            $err = new stdClass();
-            $err->message = $form->getValidationErrors();
-            return new JsonResponse($err, 400);
-        }
-        try {
-            $session = $form->toCommand($user->getId());
-            $session->setId($id);
-            $rows = $this->sessionRepository->updateSession($user->getId(), $session);
+        $form->validate();
 
-            $out = new stdClass();
-            $out->rowsAffected=$rows;
-            $out->session = $session;
-            return new JsonResponse($out);
-        } catch (Exception $ex) {
-            $err = new stdClass();
-            $err->message = $ex->getMessage();
-            return new JsonResponse($err, 400);
-        }
+        $session = $form->toCommand($user->getId());
+        $session->setId($id);
+        $rows = $this->sessionRepository->updateSession($user->getId(), $session);
+
+        $out = new stdClass();
+        $out->rowsAffected = $rows;
+        $out->session = $session;
+
+        return new JsonResponse($out);
     }
 
     public function deleteSession(Request $request, array $param) {
-        $userToken = $request->headers->get("user-token") ?? "";
-        $user = $this->loginController->getUserByToken($userToken);
+        $user = $this->authenticator->authenticate();
         $id = false;
 
         if (!$user || $user->getToken() !== $userToken) {
@@ -179,7 +119,7 @@ final class SessionController {
             $rows = $this->sessionRepository->deleteSession($id, $user->getId());
 
             $out = new stdClass();
-            $out->rowsAffected=$rows;
+            $out->rowsAffected = $rows;
             return new JsonResponse($out);
         } catch (Exception $ex) {
             $err = new stdClass();
@@ -187,5 +127,4 @@ final class SessionController {
             return new JsonResponse($err, 400);
         }
     }
-
 }

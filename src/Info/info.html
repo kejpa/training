@@ -124,7 +124,8 @@
                 <td>
                     passwordReset (bool)
                 </td>
-                <td>Sends mail to user with info how to reset password</td>
+                <td>Resets password.<br>
+                    Future versions will send mail to user with info how to reset password</td>
             </tr>
             <tr>
                 <td>/resetPassword/{user}</td>
@@ -188,7 +189,7 @@
                     email (string)<br>,
                     firstname (string)<br>,
                     lastname (string)<br>,
-                    password (string)<br>,
+                    password (string)<br>
                 </td>
                 <td>
                     user: {<br>
@@ -203,6 +204,7 @@
                 <td>Registers new user</td>
             </tr>
         </table>
-        <p><sup id="note">*</sup> user-token (string) is requested as a head parameter</p>
+        <p><sup id="note">*</sup> Bearer (string) is requested as a head parameter</p>
+        <p>Send POST-data as formdata.</p>
     </body>
 </html>
