@@ -33,7 +33,7 @@ final class DbalUserRepository implements UserRepository {
         $qb->from("users");
         $qb->where('token=' . $qb->createNamedParameter($token));
 
-        $stmt = $qb->execute();
+        $stmt = $qb->executeQuery();
         $row = $stmt->fetch();
         if (!$row) {
             return null;
@@ -53,13 +53,15 @@ final class DbalUserRepository implements UserRepository {
                 ->addSelect("resettoken")
                 ->addSelect("resetdate");
         $qb->from("users");
-        $qb->where('email=' . $qb->createNamedParameter($email));
+        $qb->where("email= {$qb->createNamedParameter($email)}");
         
-        $stmt = $qb->execute();
-        $row = $stmt->fetch();
+        $stmt = $qb->executeQuery();
+        $row = $stmt->fetchAssociative();
+
         if (!$row) {
             return null;
         }
+
         return User::createFromRow($row);
     }
 

@@ -4,6 +4,8 @@ declare (strict_types=1);
 
 namespace trainingAPI\Login;
 
+use trainingAPI\Exceptions\AuthenticationException;
+
 /**
  * Description of LoginHandler
  *
@@ -11,20 +13,17 @@ namespace trainingAPI\Login;
  */
 class LoginHandler {
 
-    private $userRepository;
-
-    public function __construct(UserRepository $userRepository) {
-        $this->userRepository = $userRepository;
+    public function __construct(private UserRepository $userRepository) {
+        
     }
 
     public function handle(Login $command): ?User {
         $user = $this->userRepository->getUserByEmail($command->getUsername());
         if ($user === null) {
-            return null;
+            throw new AuthenticationException("Invalid username or password");
         }
         $user->logIn($command->getPassword());
 
         return $user;
     }
-
 }

@@ -8,6 +8,7 @@ use DateInterval;
 use DateTimeImmutable;
 use JsonSerializable;
 use stdClass;
+use trainingAPI\Exceptions\AuthenticationException;
 
 /**
  * Description of User
@@ -53,11 +54,8 @@ final class User implements JsonSerializable {
 
     public function logIn(string $password): void {
         if (!password_verify($password, $this->password)) {
-            
-            return;
+            throw new AuthenticationException("Invalid username or password");
         }
-
-        $this->recordedEvents[] = new UserWasLoggedIn();
     }
 
     public function forgot(): void {

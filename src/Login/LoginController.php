@@ -18,19 +18,19 @@ use trainingAPI\Exceptions\ValidationException;
 final class LoginController {
 
     public function __construct(private Request $request, private UserRepository $userRepository, private LoginHandler $loginHandler,
-            private EmailExistsQuery $emailExistsQuery) {
+            private EmailExistsQuery $emailExistsQuery, private \trainingAPI\Jwt\JwtAccessTokenHandler $jwtAccessTokenHandler) {
         
     }
 
     public function getUserByToken(string $token = null): ?User {
-        $userToken =$token ?? $this->request->headers->get("user-token") ??"";
+        $userToken = $token ?? $this->request->headers->get("user-token") ?? "";
 
         $user = $this->userRepository->getUserByToken($userToken);
         if (!$user || $user->getToken() !== $userToken) {
             $messages = ['Validation failed', "No match for token $userToken"];
             throw ValidationException::withMessages($messages);
         }
-        
+
         return $user;
     }
 
@@ -39,31 +39,13 @@ final class LoginController {
         $username = $content->username ?? '';
         $password = $content->password ?? '';
 
-        $user = $this->loginHandler->handle(
-                new Login($username, $password)
-        );
+        $user = $this->loginHandler->handle(new Login($username, $password));
 
-        $origin = $request->headers->get('Origin', "*");
-        $headers = [];
-        $headers["Access-Control-Allow-Origin"] = $origin;
+        $jwt = $this->jwtAccessTokenHandler->getToken(json_encode($user));
 
-        if (!$user) {
-            $err = new stdClass();
-            $err->message = ['Validation failed', "Unable to login"];
-            return new JsonResponse($err, 401, $headers);
-        }
-
-        foreach ($user->getRecordedEvents() as $event) {
-            if ($event instanceof UserWasLoggedIn) {
-                $out = new stdClass();
-                $out->user = $user; //->jsonSerialize();
-                return new JsonResponse($out, 200, $headers);
-            }
-        }
-
-        $err = new stdClass();
-        $err->message = ['Validation failed', "Unable to login"];
-        return new JsonResponse($err, 401, $headers);
+        $out = new stdClass();
+        $out->jwt = $jwt; 
+        return new JsonResponse($out);
     }
 
     public function resetPassword(Request $request, array $param): JsonResponse {

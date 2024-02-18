@@ -6,7 +6,7 @@ return [
 // Sessions    
     [
         'GET',
-        '/sessions/',
+        '/sessions[/]',
         'trainingAPI\Session\SessionController#getAllSessions'
     ],
     [
@@ -32,7 +32,7 @@ return [
     // Login
     [
         'POST',
-        '/login/',
+        '/login',
         'trainingAPI\Login\LoginController#logIn'
     ],
     [

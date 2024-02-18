@@ -23,7 +23,8 @@ class ConnectionFactory {
                             'user' => $this->config->get("Database.user"),
                             'password' => $this->config->get("Database.password"),
                             'host' => $this->config->get("Database.host"),
-                            'driver' => 'pdo_mysql'],
+                            'driver' => 'pdo_mysql',
+                            'charset' => 'utf8'],
                         new Configuration()
         );
     }

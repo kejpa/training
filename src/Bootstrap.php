@@ -7,6 +7,7 @@ use FastRoute\RouteCollector;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use trainingAPI\Exceptions\AuthenticationException;
 use trainingAPI\Exceptions\AuthorizationException;
 use trainingAPI\Exceptions\ValidationException;
 use function FastRoute\simpleDispatcher;
@@ -56,6 +57,10 @@ try {
     if (!$response instanceof Response) {
         $response = new JsonResponse('Oväntat fel inträffade', 500);
     }
+} catch (AuthenticationException $ex) {
+    $error = new stdClass();
+    $error->message = [$ex->getMessage()];
+    $response = new JsonResponse($error, 401);
 } catch (AuthorizationException $ex) {
     $error = new stdClass();
     $error->message = [$ex->getMessage()];

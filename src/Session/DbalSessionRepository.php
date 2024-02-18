@@ -29,8 +29,7 @@ final class DbalSessionRepository implements SessionRepository {
                 ->addSelect("description");
         $qb->from("sessions");
         $qb->where('userid=' . $qb->createNamedParameter($userid));
-        $qb->andWhere("id<8");
-        $qb->orderBy("date","ASC");
+        $qb->orderBy("date","DESC");
 
         $stmt = $qb->executeQuery();
         $rows = $stmt->fetchAllAssociative();
