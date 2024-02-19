@@ -67,7 +67,7 @@ return [
     ],
     [
         'OPTIONS',
-        '/login/',
+        '/login[/]',
         'trainingAPI\Preflight\PreflightController#preFlight'
     ],
     [

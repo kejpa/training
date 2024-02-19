@@ -54,7 +54,7 @@ final class User implements JsonSerializable {
 
     public function logIn(string $password): void {
         if (!password_verify($password, $this->password)) {
-            throw new AuthenticationException("Invalid username or password");
+            throw new AuthenticationException("Invalid username or password bad password");
         }
     }
 

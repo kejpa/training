@@ -23,8 +23,8 @@ final class SessionController {
         
     }
 
-    public function getAllSessions(): JsonResponse {
-        $user = $this->authenticator->authenticate();
+    public function getAllSessions(Request $request): JsonResponse {
+        $user = $this->authenticator->authenticate($request);
 
         $out = new stdClass();
         $out->sessions = $this->sessionRepository->getAllSessions($user->getId());

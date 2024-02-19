@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use Firebase\JWT\ExpiredException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,30 +54,34 @@ try {
             $response = $controller->$method($request, $vars);
             break;
     }
+    
 // Vi fick fel objekttyp i retur! Något gick fel!
     if (!$response instanceof Response) {
         $response = new JsonResponse('Oväntat fel inträffade', 500);
     }
-} catch (AuthenticationException $ex) {
+
+    
+    } catch (ValidationException $ex) {
+    $error = new stdClass();
+    $error->message = $ex->getAllMessages();
+    $response = new JsonResponse($error, 400);
+} catch (ExpiredException | AuthenticationException $ex) {
     $error = new stdClass();
     $error->message = [$ex->getMessage()];
     $response = new JsonResponse($error, 401);
 } catch (AuthorizationException $ex) {
     $error = new stdClass();
     $error->message = [$ex->getMessage()];
-    $response = new JsonResponse($error, 401);
-} catch (ValidationException $ex) {
-    $error = new stdClass();
-    $error->message = $ex->getAllMessages();
-    $response = new JsonResponse($error, 400);
+    $response = new JsonResponse($error, 403);
 } catch (Exception $ex) {
-    var_dump($ex);exit;
+    var_dump($ex);
+    exit;
     $error = new stdClass();
     $error->message = [$ex->getMessage()];
-    $error->trace=$ex->getTrace();
+    $error->trace = $ex->getTrace();
     $response = new JsonResponse($error, 400);
 }
-$response->headers->add(['Access-Control-Allow-Origin'=>'*']);
+$response->headers->add(['Access-Control-Allow-Origin' => '*']);
 // Förbered utdata
 $response->prepare($request);
 // Skicka utdata

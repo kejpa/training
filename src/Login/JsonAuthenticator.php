@@ -4,6 +4,8 @@ declare (strict_types=1);
 
 namespace trainingAPI\Login;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Description of jsonAuthenticator
  *
@@ -11,7 +13,7 @@ namespace trainingAPI\Login;
  */
 final class JsonAuthenticator implements Authenticator {
 
-    public function authenticate(): User {
+    public function authenticate(Request $request): User {
         return User::createFromRow([
                     "id" => 1,
                     "email" => "kjell@kejpa.com",
