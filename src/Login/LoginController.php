@@ -8,7 +8,7 @@ use DateTimeImmutable;
 use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use trainingAPI\Exceptions\ValidationException;
+use trainingAPI\Jwt\JwtAccessTokenHandler;
 
 /**
  * Description of LoginController
@@ -18,20 +18,8 @@ use trainingAPI\Exceptions\ValidationException;
 final class LoginController {
 
     public function __construct(private Request $request, private UserRepository $userRepository, private LoginHandler $loginHandler,
-            private EmailExistsQuery $emailExistsQuery, private \trainingAPI\Jwt\JwtAccessTokenHandler $jwtAccessTokenHandler) {
+            private EmailExistsQuery $emailExistsQuery, private JwtAccessTokenHandler $jwtAccessTokenHandler,private Authenticator $authenticator, ) {
         
-    }
-
-    public function getUserByToken(string $token = null): ?User {
-        $userToken = $token ?? $this->request->headers->get("user-token") ?? "";
-
-        $user = $this->userRepository->getUserByToken($userToken);
-        if (!$user || $user->getToken() !== $userToken) {
-            $messages = ['Validation failed', "No match for token $userToken"];
-            throw ValidationException::withMessages($messages);
-        }
-
-        return $user;
     }
 
     public function logIn(Request $request): JsonResponse {
@@ -47,6 +35,16 @@ final class LoginController {
         $out->jwt = $jwt; 
         return new JsonResponse($out);
     }
+    
+    public function check(Request $request): JsonResponse {
+        $user=$this->authenticator->authenticate($request);
+
+        $jwt = $this->jwtAccessTokenHandler->getToken(json_encode($user));
+
+        $out = new stdClass();
+        $out->jwt = $jwt; 
+        return new JsonResponse($out);
+    }    
 
     public function resetPassword(Request $request, array $param): JsonResponse {
         $request->query->add($param);

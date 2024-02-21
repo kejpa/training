@@ -36,6 +36,11 @@ return [
         'trainingAPI\Login\LoginController#logIn'
     ],
     [
+        'GET',
+        '/check[/]',
+        'trainingAPI\Login\LoginController#check'
+    ],
+    [
         'POST',
         '/register/',
         'trainingAPI\Login\LoginController#register'
@@ -55,24 +60,19 @@ return [
         '/resetPassword/{user}',
         'trainingAPI\Login\LoginController#changePassword'
     ],
-    [
-        'POST',
-        '/checkToken/',
-        'trainingAPI\Login\LoginController#checkToken'
-    ],
-    [
-        'OPTIONS',
-        '/checkToken/',
-        'trainingAPI\Preflight\PreflightController#preFlight'
-    ],
-    [
-        'OPTIONS',
-        '/login[/]',
-        'trainingAPI\Preflight\PreflightController#preFlight'
-    ],
-    [
-        'OPTIONS',
-        '/sessions[/{id:\d+}]',
-        'trainingAPI\Preflight\PreflightController#preFlight'
-    ],
+//    [
+//        'OPTIONS',
+//        '/checkToken/',
+//        'trainingAPI\Preflight\PreflightController#preFlight'
+//    ],
+//    [
+//        'OPTIONS',
+//        '/login[/]',
+//        'trainingAPI\Preflight\PreflightController#preFlight'
+//    ],
+//    [
+//        'OPTIONS',
+//        '/sessions[/{id:\d+}]',
+//        'trainingAPI\Preflight\PreflightController#preFlight'
+//    ],
 ];

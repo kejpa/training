@@ -81,7 +81,7 @@ try {
     $error->trace = $ex->getTrace();
     $response = new JsonResponse($error, 400);
 }
-$response->headers->add(['Access-Control-Allow-Origin' => '*']);
+// $response->headers->add(['Access-Control-Allow-Origin' => '*']);
 // Förbered utdata
 $response->prepare($request);
 // Skicka utdata
