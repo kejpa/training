@@ -29,7 +29,7 @@ final class SessionController {
         $out = new stdClass();
         $out->sessions = $this->sessionRepository->getAllSessions($user->getId());
 
-        return (new JsonResponse($out, 200))->setEncodingOptions(15 + JSON_UNESCAPED_UNICODE);
+        return new JsonResponse($out);
     }
 
     public function getSession(Request $request, array $param): JsonResponse {
@@ -47,11 +47,11 @@ final class SessionController {
         $out = new stdClass();
         $out->sessions = $this->sessionRepository->getSession($user->getId(), $id);
 
-        return new JsonResponse($out, 200);
+        return new JsonResponse($out);
     }
 
     public function addSession(Request $request) {
-        $user = $this->authenticator->authenticate();
+        $user = $this->authenticator->authenticate($request);
 
         $validators = ["date" => SessionValidatorFactory::createSessionDateValidator()];
         $form = SessionFormFactory::createFromContent($request, $validators);
@@ -62,11 +62,11 @@ final class SessionController {
 
         $out = new stdClass();
         $out->session = $session;
-        return new JsonResponse($out, 200);
+        return new JsonResponse($out);
     }
 
     public function updateSession(Request $request, array $param) {
-        $user = $this->authenticator->authenticate();
+        $user = $this->authenticator->authenticate($request);
         $id = false;
 
         if (array_key_exists('id', $param)) {
@@ -97,34 +97,21 @@ final class SessionController {
     }
 
     public function deleteSession(Request $request, array $param) {
-        $user = $this->authenticator->authenticate();
+        $user = $this->authenticator->authenticate($request);
         $id = false;
-
-        if (!$user || $user->getToken() !== $userToken) {
-            $err = new stdClass();
-            $err->message = ['Validation failed', "No match for token $userToken"];
-            return new JsonResponse($err, 401);
-        }
 
         if (array_key_exists('id', $param)) {
             $id = filter_var($param['id'], FILTER_VALIDATE_INT);
         }
         if ($id === false) {
-            $err = new stdClass();
-            $err->message = ['Validation failed', "Invalid id supplied"];
-            return new JsonResponse($err, 400);
+            $messages = ['Validation failed', "Invalid id supplied"];
+            throw ValidationException::withMessages($messages);
         }
 
-        try {
-            $rows = $this->sessionRepository->deleteSession($id, $user->getId());
+        $rows = $this->sessionRepository->deleteSession($id, $user->getId());
 
-            $out = new stdClass();
-            $out->rowsAffected = $rows;
-            return new JsonResponse($out);
-        } catch (Exception $ex) {
-            $err = new stdClass();
-            $err->message = $ex->getMessage();
-            return new JsonResponse($err, 400);
-        }
+        $out = new stdClass();
+        $out->rowsAffected = $rows;
+        return new JsonResponse($out);
     }
 }
