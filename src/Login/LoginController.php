@@ -46,6 +46,12 @@ final class LoginController {
         return new JsonResponse($out);
     }    
 
+    public function logout(Request $request): JsonResponse {
+        $out = new stdClass();
+        $out->message = ['User logged out']; 
+        return new JsonResponse($out);
+    }    
+
     public function resetPassword(Request $request, array $param): JsonResponse {
         $request->query->add($param);
         // OBS!!!! Ta bort när en "riktig" webbserver används!!!

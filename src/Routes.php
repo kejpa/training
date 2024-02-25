@@ -41,6 +41,11 @@ return [
         'trainingAPI\Login\LoginController#check'
     ],
     [
+        'GET',
+        '/logout[/]',
+        'trainingAPI\Login\LoginController#logout'
+    ],
+    [
         'POST',
         '/register/',
         'trainingAPI\Login\LoginController#register'
