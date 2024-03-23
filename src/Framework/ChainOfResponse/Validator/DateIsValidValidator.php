@@ -13,21 +13,20 @@ use trainingAPI\Framework\ChainOfResponse\ChainOfResponseValidator;
  * Kontrollerar om angivet datum är ett giltigt datum 
  * @author kjell
  */
-final class DateIsValidValidator extends ChainOfResponseValidator{
+final class DateIsValidValidator extends ChainOfResponseValidator {
 
     public function check(string $date): bool {
         try {
             $datum = new DateTimeImmutable($date);
             if ($datum->format("Y-m-d") !== $date) {
-                $this->appendError([__CLASS__ ,"Ogiltigt datum ($date)"]);
+                $this->appendError([__CLASS__, "Ogiltigt datum ($date)"]);
                 return false;
             }
         } catch (Exception $e) {
-            $this->appendError([__CLASS__ ,$e->getMessage()]);
+            $this->appendError([__CLASS__, $e->getMessage()]);
             return false;
         }
 
         return true;
     }
-
 }

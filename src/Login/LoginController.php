@@ -6,9 +6,13 @@ namespace trainingAPI\Login;
 
 use DateTimeImmutable;
 use stdClass;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use trainingAPI\Exceptions\AuthenticationException;
 use trainingAPI\Jwt\JwtAccessTokenHandler;
+use trainingAPI\Jwt\JwtRefreshTokenHandler;
+use trainingAPI\Jwt\RefreshToken;
 
 /**
  * Description of LoginController
@@ -18,7 +22,8 @@ use trainingAPI\Jwt\JwtAccessTokenHandler;
 final class LoginController {
 
     public function __construct(private Request $request, private UserRepository $userRepository, private LoginHandler $loginHandler,
-            private EmailExistsQuery $emailExistsQuery, private JwtAccessTokenHandler $jwtAccessTokenHandler,private Authenticator $authenticator, ) {
+            private EmailExistsQuery $emailExistsQuery, private JwtAccessTokenHandler $jwtAccessTokenHandler, private Authenticator $authenticator,
+            private JwtRefreshTokenHandler $jwtRefreshTokenHandler, private \trainingAPI\Jwt\TokenRepository $tokenRepository) {
         
     }
 
@@ -32,25 +37,103 @@ final class LoginController {
         $jwt = $this->jwtAccessTokenHandler->getToken(json_encode($user));
 
         $out = new stdClass();
-        $out->jwt = $jwt; 
-        return new JsonResponse($out);
+        $out->jwt = $jwt;
+
+        $refreshToken = new RefreshToken($user->getId(), bin2hex(random_bytes(20)));
+        $cookieContent = $this->jwtRefreshTokenHandler->getToken(json_encode($refreshToken));
+        $cookie = $this->createCookie($cookieContent, $this->jwtRefreshTokenHandler->getExpires());
+
+        // Skapa post i databasen 
+        $refreshToken->setExpires($this->jwtRefreshTokenHandler->getExpires());
+        $this->tokenRepository->addRefreshToken($refreshToken);
+
+        $retur = new JsonResponse($out);
+        $retur->headers->setCookie($cookie);
+        return $retur;
     }
-    
+
     public function check(Request $request): JsonResponse {
-        $user=$this->authenticator->authenticate($request);
+        $user = $this->authenticator->authenticate($request);
 
         $jwt = $this->jwtAccessTokenHandler->getToken(json_encode($user));
 
         $out = new stdClass();
-        $out->jwt = $jwt; 
+        $out->jwt = $jwt;
         return new JsonResponse($out);
-    }    
+    }
 
     public function logout(Request $request): JsonResponse {
+        try {
+            $cookie = $this->createCookie('', 0);
+            $refreshToken = $this->getRefreshToken($request);
+
+            $this->tokenRepository->removeRefreshToken($refreshToken);
+        } finally {
+            $out = new stdClass();
+            $out->message = ['User logged out'];
+
+            $retur = new JsonResponse($out);
+            $retur->headers->setCookie($cookie);
+            return $retur;
+        }
+    }
+
+    public function refresh(Request $request): JsonResponse {
+        $refreshToken = $this->getRefreshToken($request);
+
+        // Kontrollera och hämta användare
+        $user = $this->getUserFromRefreshToken($refreshToken);
+        $jwt = $this->jwtAccessTokenHandler->getToken(json_encode($user));
+
         $out = new stdClass();
-        $out->message = ['User logged out']; 
-        return new JsonResponse($out);
-    }    
+        $out->jwt = $jwt;
+
+        $cookieContent = $this->jwtRefreshTokenHandler->getToken(json_encode($refreshToken));
+        $cookie = $this->createCookie($cookieContent, $this->jwtRefreshTokenHandler->getExpires());
+
+        // Uppdatera databasen med nya expires
+        $refreshToken->setExpires($this->jwtRefreshTokenHandler->getExpires());
+        $this->tokenRepository->updateRefreshToken($refreshToken);
+
+        $retur = new JsonResponse($out);
+        $retur->headers->setCookie($cookie);
+        return $retur;
+    }
+
+    /*
+     * Privata funktioner
+     */
+
+    private function getRefreshToken(Request $request): RefreshToken {
+        // Läs cookie
+        $refreshToken = $request->cookies->getString("refresh", '');
+        if ($refreshToken === '') {
+            throw new AuthenticationException('No refresh token');
+        }
+        // Validera token
+        $this->jwtRefreshTokenHandler->validate($refreshToken);
+
+        // Läs payload 
+        $payload = $this->jwtRefreshTokenHandler->getPayload($refreshToken);
+
+        // Returnera token
+        return RefreshToken::fromStdClass(json_decode($payload));
+    }
+
+    private function getUserFromRefreshToken(RefreshToken $token): User {
+        // Kontrollera användare
+        $user = $this->userRepository->getUserByRefreshToken($token);
+
+        return $user;
+    }
+
+    private function createCookie(string $content, int $expires) {
+        return Cookie::create("refresh", $content, $expires, "/api/refresh", secure: true, httpOnly: true); //, sameSite: Cookie::SAMESITE_STRICT);
+    }
+
+    /*
+     * Gammalt!
+     */
 
     public function resetPassword(Request $request, array $param): JsonResponse {
         $request->query->add($param);

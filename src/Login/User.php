@@ -160,5 +160,4 @@ final class User implements JsonSerializable {
         // Password, ResetToken och ResetDate ska inte skickas till klienten.
         return $me;
     }
-
 }

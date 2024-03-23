@@ -54,14 +54,12 @@ try {
             $response = $controller->$method($request, $vars);
             break;
     }
-    
+
 // Vi fick fel objekttyp i retur! Något gick fel!
     if (!$response instanceof Response) {
         $response = new JsonResponse('Oväntat fel inträffade', 500);
     }
-
-    
-    } catch (ValidationException $ex) {
+} catch (ValidationException $ex) {
     $error = new stdClass();
     $error->message = $ex->getAllMessages();
     $response = new JsonResponse($error, 400);
@@ -79,7 +77,7 @@ try {
     $error = new stdClass();
     $error->message = [$ex->getMessage()];
     $error->trace = $ex->getTrace();
-    $response = new JsonResponse($error, 400);
+    $response = new JsonResponse($error, 500);
 }
 // $response->headers->add(['Access-Control-Allow-Origin' => '*']);
 // Förbered utdata

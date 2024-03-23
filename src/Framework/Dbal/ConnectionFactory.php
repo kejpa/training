@@ -28,5 +28,4 @@ class ConnectionFactory {
                         new Configuration()
         );
     }
-
 }

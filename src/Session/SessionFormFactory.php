@@ -16,12 +16,12 @@ final class SessionFormFactory {
     static public function createFromContent(Request $request, array $validators): SessionForm {
         $content = json_decode($request->getContent());
         $id = "";
-        $rpe=null;
+        $rpe = null;
         if (isset($content->id)) {
             $id = $content->id;
         }
-        if(isset($content->rpe)) {
-            $rpe=(int) $content->rpe;
+        if (isset($content->rpe)) {
+            $rpe = (int) $content->rpe;
         }
 
         return new SessionForm(
@@ -33,5 +33,4 @@ final class SessionFormFactory {
                 $rpe,
                 $validators);
     }
-
 }

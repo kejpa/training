@@ -13,7 +13,7 @@ abstract class ChainOfResponseValidator implements ChainOfResponse {
     private $next;
     private $errors = [];
 
-     public function validate(string $check): bool {
+    public function validate(string $check): bool {
         if ($this->next && $this->check($check)) {
             if (!$this->next->validate($check)) {
                 $this->errors = array_merge($this->errors, $this->next->getErrors());
@@ -34,12 +34,11 @@ abstract class ChainOfResponseValidator implements ChainOfResponse {
         }
     }
 
-     public function getErrors(): array {
+    public function getErrors(): array {
         return $this->errors;
     }
 
     final public function next(ChainOfResponse $validator): void {
         $this->next = $validator;
     }
-
 }

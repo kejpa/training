@@ -13,7 +13,7 @@ use trainingAPI\Framework\ChainOfResponse\ChainOfResponseValidator;
  * Kontrollerar om inmatat datum är tidigare än dagens datum
  * @author kjell
  */
-final class DateIsInPastValidator extends ChainOfResponseValidator  {
+final class DateIsInPastValidator extends ChainOfResponseValidator {
 
     public function check(string $date): bool {
         try {
@@ -30,5 +30,4 @@ final class DateIsInPastValidator extends ChainOfResponseValidator  {
 
         return true;
     }
-
 }

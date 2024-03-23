@@ -2,13 +2,15 @@
 
 namespace trainingAPI\Login;
 
+use trainingAPI\Jwt\RefreshToken;
+
 /**
  *
  * @author kjell
  */
 interface UserRepository {
 
-    public function getUserByToken(string $token): ?User;
+    public function getUserByRefreshToken(RefreshToken $token): ?User;
 
     public function getUserByEmail(string $email): ?User;
 

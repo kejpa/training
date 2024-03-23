@@ -52,4 +52,8 @@ abstract class JwtHandler {
 
         return $decodedToken->data;
     }
+
+    final public function getExpires(): int {
+        return $this->expire;
+    }
 }

@@ -9,5 +9,6 @@ namespace trainingAPI\Exceptions;
  *
  * @author kjell
  */
-final class AuthenticationException extends \Exception{
+final class AuthenticationException extends \Exception {
+    
 }

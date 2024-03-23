@@ -32,11 +32,12 @@ final class UserForm {
     public static function fromRequest(array $request, array $validators = []): UserForm {
         return new UserForm($request["id"] ?? null, $request["email"], $request["firstname"], $request["lastname"], $request["password"], $validators);
     }
+
     public function getId(): ?string {
         return $this->id;
     }
 
-        public function getEmail(): string {
+    public function getEmail(): string {
         return $this->email;
     }
 
@@ -53,10 +54,10 @@ final class UserForm {
     }
 
     public function hasValidationErrors(): bool {
-        $result=false;
+        $result = false;
         foreach ($this->validators as $key => $validator) {
             if (!$validator->validate($this->$key)) {
-                $result= true;
+                $result = true;
             }
         }
 
@@ -77,5 +78,4 @@ final class UserForm {
             return User::register($this->email, $this->firstname, $this->lastname, $this->password);
         }
     }
-
 }

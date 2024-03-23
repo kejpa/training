@@ -5,6 +5,7 @@ declare (strict_types=1);
 namespace trainingAPI\Login;
 
 use Doctrine\DBAL\Connection;
+use trainingAPI\Jwt\RefreshToken;
 
 /**
  * Description of DbalLoginRepository
@@ -13,10 +14,8 @@ use Doctrine\DBAL\Connection;
  */
 final class DbalUserRepository implements UserRepository {
 
-    private $connection;
-
-    public function __construct(Connection $connection) {
-        $this->connection = $connection;
+    public function __construct(private Connection $connection) {
+        
     }
 
     public function getUserByToken(string $token): ?User {
@@ -54,7 +53,7 @@ final class DbalUserRepository implements UserRepository {
                 ->addSelect("resetdate");
         $qb->from("users");
         $qb->where("email= {$qb->createNamedParameter($email)}");
-        
+
         $stmt = $qb->executeQuery();
         $row = $stmt->fetchAssociative();
 
@@ -73,29 +72,53 @@ final class DbalUserRepository implements UserRepository {
                 ->set('lastname', $qb->createNamedParameter($user->getLastname()))
                 ->set('password', $qb->createNamedParameter($user->getPassword()))
                 ->set('token', $qb->createNamedParameter($user->getToken()))
-                ->set('tokendate', $qb->createNamedParameter($user->getTokenDate()===null ? null: $user->getTokenDate()->format("Y-m-d H:i:s")))
+                ->set('tokendate', $qb->createNamedParameter($user->getTokenDate() === null ? null : $user->getTokenDate()->format("Y-m-d H:i:s")))
                 ->set('resettoken', $qb->createNamedParameter($user->getResetToken()))
-                ->set('resetdate', $qb->createNamedParameter($user->getResetDate()===null ? null :$user->getResetDate()->format("Y-m-d H:i:s")));
+                ->set('resetdate', $qb->createNamedParameter($user->getResetDate() === null ? null : $user->getResetDate()->format("Y-m-d H:i:s")));
         $qb->where('id=' . $qb->createNamedParameter($user->getId()));
 
         return $qb->executeStatement();
     }
 
     public function addUser(User $user): int {
-         $qb = $this->connection->createQueryBuilder();
+        $qb = $this->connection->createQueryBuilder();
         $qb->insert('users');
         $qb->values(['email' => $qb->createNamedParameter($user->getEmail()),
-                'firstname' => $qb->createNamedParameter($user->getFirstname()), 
-                'lastname'=> $qb->createNamedParameter($user->getLastname()), 
-                'password' => $qb->createNamedParameter($user->getPassword()), 
-                'token' => $qb->createNamedParameter($user->getToken()), 
-                'tokendate' => $qb->createNamedParameter($user->getTokenDate()->format("Y-m-d H:i:s"))
-                ]);
+            'firstname' => $qb->createNamedParameter($user->getFirstname()),
+            'lastname' => $qb->createNamedParameter($user->getLastname()),
+            'password' => $qb->createNamedParameter($user->getPassword()),
+            'token' => $qb->createNamedParameter($user->getToken()),
+            'tokendate' => $qb->createNamedParameter($user->getTokenDate()->format("Y-m-d H:i:s"))
+        ]);
 
         $qb->executeStatement();
-        
+
         return (int) $qb->getConnection()->lastInsertId();
-       
     }
 
+    public function getUserByRefreshToken(RefreshToken $token): ?User {
+        $qb = $this->connection->createQueryBuilder();
+        $qb->addSelect("id")
+                ->addSelect("email")
+                ->addSelect("firstname")
+                ->addSelect("lastname")
+                ->addSelect("password")
+                ->addSelect("users.token")
+                ->addSelect("tokendate")
+                ->addSelect("resettoken")
+                ->addSelect("resetdate");
+        $qb->from("users")
+                ->innerJoin('users', 'apptoken', 'apptoken', 'apptoken.userid=users.id');
+        $qb->where("id= {$qb->createNamedParameter($token->getId())}")
+                ->andWhere("apptoken.token={$qb->createNamedParameter($token->getToken())}");
+
+        $stmt = $qb->executeQuery();
+        $row = $stmt->fetchAssociative();
+
+        if (!$row) {
+            return null;
+        }
+
+        return User::createFromRow($row);
+    }
 }

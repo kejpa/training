@@ -13,22 +13,22 @@ use trainingAPI\Login\EmailExistsQuery;
  *
  * @author kjell
  */
-final class DbalEmailExistsQuery implements EmailExistsQuery{
-private $connection;
+final class DbalEmailExistsQuery implements EmailExistsQuery {
 
-public function __construct(Connection $connection) {
-    $this->connection=$connection;
-}
+    private $connection;
+
+    public function __construct(Connection $connection) {
+        $this->connection = $connection;
+    }
+
     public function execute(string $email): bool {
         $qb = $this->connection->createQueryBuilder();
         $qb->select('email');
         $qb->from('users');
         $qb->where('email=' . $qb->createNamedParameter($email));
-        
-        $stmt=$qb->executeQuery();
-        
-        return boolval($stmt->rowCount());
-        
-    }
 
+        $stmt = $qb->executeQuery();
+
+        return boolval($stmt->rowCount());
+    }
 }

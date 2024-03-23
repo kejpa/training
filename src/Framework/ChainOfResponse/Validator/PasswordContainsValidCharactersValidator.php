@@ -12,12 +12,12 @@ use trainingAPI\Framework\ChainOfResponse\ChainOfResponseValidator;
  * Kontrollerar om inmatat lösenord innehåller otillåtna tecken (lägre än ASCII32)
  * @author kjell
  */
-final class PasswordContainsValidCharactersValidator extends ChainOfResponseValidator  {
+final class PasswordContainsValidCharactersValidator extends ChainOfResponseValidator {
 
     public function check(string $password): bool {
         try {
-            $pwd = filter_var($password,FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
-            if ($pwd!==$password) {
+            $pwd = filter_var($password, FILTER_UNSAFE_RAW, FILTER_FLAG_STRIP_LOW);
+            if ($pwd !== $password) {
                 $this->appendError([__CLASS__, "Lösenord innehåller otillåtna tecken($pwd!==$password)"]);
                 return false;
             }
@@ -28,5 +28,4 @@ final class PasswordContainsValidCharactersValidator extends ChainOfResponseVali
 
         return true;
     }
-
 }

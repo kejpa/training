@@ -1,4 +1,5 @@
 <?php
+
 declare (strict_types=1);
 
 namespace trainingAPI\Login;
@@ -6,7 +7,6 @@ namespace trainingAPI\Login;
 use trainingAPI\Framework\ChainOfResponse\ChainOfResponseValidator;
 use trainingAPI\Framework\ChainOfResponse\Validator\PasswordContainsValidCharactersValidator;
 use trainingAPI\Framework\ChainOfResponse\Validator\PasswordIsLongEnoughValidator;
-
 
 /**
  * Description of PasswordValidatorFactory
@@ -22,5 +22,4 @@ final class PasswordValidatorFactory {
 
         return $passwordContainsValidCharactersValidator;
     }
-
 }

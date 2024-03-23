@@ -12,21 +12,20 @@ use trainingAPI\Framework\ChainOfResponse\ChainOfResponseValidator;
  * Kontrollerar om angivet id är ett heltal
  * @author kjell
  */
-final class IdIsValidValidator extends ChainOfResponseValidator{
+final class IdIsValidValidator extends ChainOfResponseValidator {
 
     public function check(string $id): bool {
         try {
             $value = filter_var($id, FILTER_VALIDATE_INT);
-            if ($value=== false) {
-                $this->appendError([__CLASS__ ,"Ogiltigt angivet id ($id)"]);
+            if ($value === false) {
+                $this->appendError([__CLASS__, "Ogiltigt angivet id ($id)"]);
                 return false;
             }
         } catch (Exception $e) {
-            $this->appendError([__CLASS__ ,$e->getMessage()]);
+            $this->appendError([__CLASS__, $e->getMessage()]);
             return false;
         }
 
         return true;
     }
-
 }

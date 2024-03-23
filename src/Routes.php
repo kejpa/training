@@ -29,7 +29,7 @@ return [
         '/sessions/{id:\d+}',
         'trainingAPI\Session\SessionController#deleteSession'
     ],
-    // Login
+// Login
     [
         'POST',
         '/login',
@@ -43,6 +43,16 @@ return [
     [
         'GET',
         '/logout[/]',
+        'trainingAPI\Login\LoginController#logout'
+    ],
+    [
+        'GET',
+        '/refresh[/]',
+        'trainingAPI\Login\LoginController#refresh'
+    ],
+    [
+        'DELETE',
+        '/refresh[/]',
         'trainingAPI\Login\LoginController#logout'
     ],
     [

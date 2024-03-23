@@ -9,15 +9,17 @@ namespace trainingAPI\Exceptions;
  *
  * @author kjell
  */
-final class ValidationException extends \InvalidArgumentException{
-    private $messages=[];
-    
-    public static function withMessages(array $messages):self {
-        $me=new ValidationException();
-        $me->messages=$messages;
+final class ValidationException extends \InvalidArgumentException {
+
+    private $messages = [];
+
+    public static function withMessages(array $messages): self {
+        $me = new ValidationException();
+        $me->messages = $messages;
         return $me;
     }
-    public function getAllMessages():array {
+
+    public function getAllMessages(): array {
         return $this->messages;
     }
 }

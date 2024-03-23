@@ -13,11 +13,11 @@ use function mb_strlen;
  * Kontrollerar om inmatat lösenord innehåller otillåtna tecken (lägre än ASCII32)
  * @author kjell
  */
-final class PasswordIsLongEnoughValidator extends ChainOfResponseValidator  {
+final class PasswordIsLongEnoughValidator extends ChainOfResponseValidator {
 
     public function check(string $password): bool {
         try {
-            if (mb_strlen($password)<10) {
+            if (mb_strlen($password) < 10) {
                 $this->appendError([__CLASS__, "Lösenord ska vara minst 10 tecken"]);
                 return false;
             }
@@ -28,5 +28,4 @@ final class PasswordIsLongEnoughValidator extends ChainOfResponseValidator  {
 
         return true;
     }
-
 }

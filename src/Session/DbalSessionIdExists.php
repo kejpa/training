@@ -31,5 +31,4 @@ final class DbalSessionIdExists implements SessionIdExists {
 
         return (bool) $antal;
     }
-
 }

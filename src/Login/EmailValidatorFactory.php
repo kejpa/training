@@ -17,10 +17,9 @@ final class EmailValidatorFactory {
 
     public static function createEmailDontExistsValidator(EmailExistsQuery $emailExistsQuery): ChainOfResponseValidator {
         $emailIsValid = new EmailIsValidValidator();
-        $emailDontExists=new EmailDontExistsValidator($emailExistsQuery);
+        $emailDontExists = new EmailDontExistsValidator($emailExistsQuery);
         $emailIsValid->next($emailDontExists);
 
         return $emailIsValid;
     }
-
 }

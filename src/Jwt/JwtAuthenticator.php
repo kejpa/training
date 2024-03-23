@@ -31,7 +31,7 @@ final class JwtAuthenticator implements Authenticator {
 
         preg_match('/Bearer\s(\S+)/', $token, $matches);
         if (!isset($matches[1]) or strlen($matches[1]) === 0) {
-            
+            throw new AuthenticationException("Bad jwt token");
         }
         $jwtToken = $matches[1];
 

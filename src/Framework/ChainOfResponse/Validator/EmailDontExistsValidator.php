@@ -35,5 +35,4 @@ final class EmailDontExistsValidator extends ChainOfResponseValidator {
 
         return true;
     }
-
 }

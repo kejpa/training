@@ -15,8 +15,8 @@ use stdClass;
  */
 final class Session implements JsonSerializable {
 
-    public function __construct(private int $id, private int $userid, private int $length, private DateTimeImmutable $date, 
-            private string $description, private ?int $rpe=null) {
+    public function __construct(private int $id, private int $userid, private int $length, private DateTimeImmutable $date,
+            private string $description, private ?int $rpe = null) {
         
     }
 
@@ -84,5 +84,4 @@ final class Session implements JsonSerializable {
 
         return $me;
     }
-
 }

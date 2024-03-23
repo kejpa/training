@@ -38,5 +38,4 @@ final class Configuration implements ConfigInterface {
         $this->config->set($key, $value);
         $this->config->toFile($this->file);
     }
-
 }
